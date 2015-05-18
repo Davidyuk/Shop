@@ -1,0 +1,35 @@
+﻿<!--
+<% FOREACH id IN categories.keys.nsort %>
+<a href="<% request.uri_base %>/catalog/?category=<% id %>"><% categories.$id.name %></a><br>
+<% END %>
+-->
+
+<% BLOCK list %>
+	<ul>
+	<% FOREACH id IN item.keys.nsort %>
+		<li><a href="<% request.uri_base %>/catalog/?category=<% id %>"><% item.$id.name %> (<% item.$id.count %>)</a></li>
+		<% IF item.$id.content.size %>
+			<% INCLUDE list item = item.$id.content %>
+		<% END %>
+	<% END %>
+	</ul>
+<% END %>
+
+<% INCLUDE list item = categories %>
+
+<%
+#{
+#	1 => {
+#		name => 'Компьютеры',
+#		content => {
+#			2 => { name => 'Что-нибудь' }
+#			3 => {
+#				name => 'Что-нибудь2',
+#				content => {
+#					4 => { name => 'Что-нибудь3' }
+#				}
+#			}
+#		}
+#	}
+#}
+%>
