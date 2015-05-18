@@ -23,7 +23,7 @@ IF items.size %>
 			SET category_name = id.category.name;
 			"\n\t"%><tr><td colspan="3" class="category"><% category_name %></td></tr><%
 		END;
-		"\n\t"%><tr><td><% id.id %></td><td><% id.name %></td><td><% id.price %>р.</td></tr><%
+		"\n\t"%><tr><td><a href="/item/?id=<% id.id %>"><% id.id %></a></td><td><% id.name %></td><td><% id.price %>р.</td></tr><%
 	END %>
 </table><%
 	IF pages > 1;
