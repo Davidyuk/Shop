@@ -24,7 +24,7 @@ get '/item/' => sub {
 	});
 	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
 	my @stores = $rs->all();
-	print STDERR Data::Dumper::Dumper( @stores );
+	
     template 'item', {
 		title => $item->name,
 		item => $item,
@@ -60,21 +60,27 @@ sub getCategoriesIds {
 
 get '/catalog/' => sub {
 	my $db = Shop::DB::db();
-	my $rs = $db->resultset('Catalog')->search({
+	
+	my $rs = $db->resultset('CatalogJoined')->search({
 		params->{'search'}		? ( 'me.name' => { like => '%'.params->{'search'}.'%' } ) : () ,
 		params->{'category'}	? ( category_id => getCategoriesIds(params->{'category'}) ) : ()
 	}, {
-		join => 'category',
-		'+select' => ['category.name'],
-		order_by => ['category_id', 'price'],
 		rows => 30, page => (params->{'page'}) ? params->{'page'} : 1 
 	});
+	#my $rs = $db->resultset('Catalog')->search({
+	#	params->{'search'}		? ( 'me.name' => { like => '%'.params->{'search'}.'%' } ) : () ,
+	#	params->{'category'}	? ( category_id => getCategoriesIds(params->{'category'}) ) : ()
+	#}, {
+	#	join => ['category', 'stocks'],
+	#	+select => ['SUM(stocks.count)', 'id', 'name', 'price', 'category.name'],
+	#	+as => ['SUM_stocks_count', 'id', 'name', 'price', 'category.name'],
+	#	group_by => ['me.id'],
+	#	rows => 30, page => (params->{'page'}) ? params->{'page'} : 1 
+	#});
 	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-	my @catalog = $rs->all();
-	
 	template 'catalog', {
 		breadcrumbs => (params->{'category'}) ? getCategoriesBreadcrumbs(params->{'category'}) : undef,
-		items => \@catalog,
+		items => [$rs->all()],
 		pages => $rs->pager()->last_page
 	};
 };

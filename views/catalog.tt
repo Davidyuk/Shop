@@ -16,14 +16,15 @@ IF breadcrumbs;
 END;
 IF items.size %>
 <table>
-	<tr><td>ID</td><td>Наименование</td><td>Стоимость</td></tr><%
+	<tr><td>ID</td><td>Наименование</td><td>Стоимость</td><td>На складе</td></tr><%
 	SET category_name = '';
 	FOREACH id IN items;
-		IF (category_name != id.category.name) && (id.category.name != breadcrumbs.$breadcrumb_curr.name) ;
-			SET category_name = id.category.name;
-			"\n\t"%><tr><td colspan="3" class="category"><% category_name %></td></tr><%
+		IF (category_name != id.category_name) && (id.category_name != breadcrumbs.$breadcrumb_curr.name) ;
+			SET category_name = id.category_name;
+			"\n\t"%><tr><td colspan="4" class="category"><% category_name %></td></tr><%
 		END;
-		"\n\t"%><tr><td><a href="/item/?id=<% id.id %>"><% id.id %></a></td><td><% id.name %></td><td><% id.price %>р.</td></tr><%
+		IF !id.SUM_stocks_count; id.SUM_stocks_count = 0; END;
+		"\n\t"%><tr><td><a href="/item/?id=<% id.id %>"><% id.id %></a></td><td><% id.name %></td><td><% id.price %>р.</td><td><% id.count %></td></tr><%
 	END %>
 </table><%
 	IF pages > 1;

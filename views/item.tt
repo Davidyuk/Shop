@@ -1,9 +1,9 @@
 ﻿<table>
-	<tr><td>ID</td><td><% item.id %></td></tr>
-	<tr><td>Наименование</td><td><% item.name %></td></tr>
-	<tr><td>Стоимость</td><td><% item.price %> руб.</td></tr><%
+	<tr><td class="category">ID</td><td><% item.id %></td></tr>
+	<tr><td class="category">Наименование</td><td><% item.name %></td></tr>
+	<tr><td class="category">Стоимость</td><td><% item.price %> руб.</td></tr><%
 IF stores.size; %>
-	<tr><td>Можно забрать сегодня</td><td><%
+	<tr><td class="category">Можно забрать сегодня</td><td><%
 SET count = stores.size - 1;
 FOREACH id in [0..count];
 	IF id; ", "; END;
