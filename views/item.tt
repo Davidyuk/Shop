@@ -1,14 +1,25 @@
-﻿<table>
-	<tr><td class="category">ID</td><td><% item.id %></td></tr>
+﻿<table class="table catalog">
+	<tr><td class="category">Артикул</td><td><% item.id %></td></tr>
 	<tr><td class="category">Наименование</td><td><% item.name %></td></tr>
-	<tr><td class="category">Стоимость</td><td><% item.price %> руб.</td></tr><%
-IF stores.size; %>
-	<tr><td class="category">Можно забрать сегодня</td><td><%
-SET count = stores.size - 1;
-FOREACH id in [0..count];
-	IF id; ", "; END;
-	%><% stores.$id.store.name %> (<% stores.$id.count %>)<%
-END;
-%></td></tr><%
-END; %>
+	<tr><td class="category">Стоимость</td><td>
+		<% item.price %><span class="glyphicon glyphicon-ruble" aria-hidden="true"></span>
+		<div class="btn-group pull-right"><!--hidden-lg-->
+			<button type="button" class="btn btn-xs btn-default">
+				<span>В корзину</span>
+				<span class="glyphicon glyphicon-shopping-cart"></span>
+			</button>
+			<ul class="dropdown-menu dropdown-menu-right" role="menu">
+				<li class="dropdown-header hidden-lg">Можно купить в магазинах:</li><%
+				SET stores_id = item.stores_id.split('\|');
+				SET stores_name = item.stores_name.split('\|');
+				FOREACH i IN [0 .. stores_id.max] %>
+					<li><a href="/stores/id=<% stores_id.$i %>"><% stores_name.$i %></a></li><%
+				END %>	
+			</ul>
+			<button type="button" class="btn btn-xs btn-default" data-toggle="dropdown">
+				<span class="hidden-xs">Магазины</span>
+				<span class="glyphicon glyphicon-map-marker"></span>
+			</button>
+		</div>
+	</td></tr>
 </table>

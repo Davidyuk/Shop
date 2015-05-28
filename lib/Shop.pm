@@ -1,122 +1,30 @@
-package Shop;
+﻿package Shop;
 use Dancer ':syntax';
 use Shop::DB;
+use Shop::Manager;
 
 our $VERSION = '0.1';
+
+hook 'before' => sub {
+	var menu => [
+		{ name => 'Каталог', href => '/' },
+		{ name => 'Корзина <span class="badge">42</span>', href => '/shopcart/' },
+		{ name => 'Оформить заказ', href => '/order/' },
+		{ name => 'Магазины', href => '/stores/' }
+	];
+};
 
 #require Data::Dumper;
 #print STDERR Data::Dumper::Dumper( @list );
 
-get '/' => sub {
-    template 'index';
+#post '/' => sub {
+#	template 'index';
+#};
+
+get '/stores/' => sub {
+	template 'index';
 };
 
-get '/item/' => sub {
-	my $db = Shop::DB::db();
-	my $item = $db->resultset('Catalog')->find(params->{'id'});
-	my $rs = $db->resultset('Stock')->search({
-		catalog_id => $item->id
-	}, {
-		join => 'store',
-		'+select' => 'store.name',
-		order_by => 'store.name',
-		#rows => 30, page => (params->{'page'}) ? params->{'page'} : 1 
-	});
-	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-	my @stores = $rs->all();
-	
-    template 'item', {
-		title => $item->name,
-		item => $item,
-		stores => \@stores
-	};
-};
-
-sub getCategoriesBreadcrumbs {
-	my $db = Shop::DB::db();
-	my $category = $db->resultset('Category')->find($_[0]);
-	return undef unless ($category);
-	
-	my $rs = $db->resultset('Category')->search({
-		id => [ split(/,/, $category->location) ]
-	});
-	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-	
-	return [$rs->all(), { name => $category->name }];
-};
-
-sub getCategoriesIds {
-	my $db = Shop::DB::db();
-	my $category = $db->resultset('Category')->find($_[0]);
-	return undef unless ($category);
-	
-	my $loc = $category->location.','.$_[0];
-	my $rs = $db->resultset('Category')->search({
-		location => [ $loc, { like => $loc.',%' } ]
-	});
-	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-	return [$rs->get_column('id')->all(), $_[0]];
-}
-
-get '/catalog/' => sub {
-	my $db = Shop::DB::db();
-	
-	my $rs = $db->resultset('CatalogJoined')->search({
-		params->{'search'}		? ( 'me.name' => { like => '%'.params->{'search'}.'%' } ) : () ,
-		params->{'category'}	? ( category_id => getCategoriesIds(params->{'category'}) ) : ()
-	}, {
-		rows => 30, page => (params->{'page'}) ? params->{'page'} : 1 
-	});
-	#my $rs = $db->resultset('Catalog')->search({
-	#	params->{'search'}		? ( 'me.name' => { like => '%'.params->{'search'}.'%' } ) : () ,
-	#	params->{'category'}	? ( category_id => getCategoriesIds(params->{'category'}) ) : ()
-	#}, {
-	#	join => ['category', 'stocks'],
-	#	+select => ['SUM(stocks.count)', 'id', 'name', 'price', 'category.name'],
-	#	+as => ['SUM_stocks_count', 'id', 'name', 'price', 'category.name'],
-	#	group_by => ['me.id'],
-	#	rows => 30, page => (params->{'page'}) ? params->{'page'} : 1 
-	#});
-	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
-	template 'catalog', {
-		breadcrumbs => (params->{'category'}) ? getCategoriesBreadcrumbs(params->{'category'}) : undef,
-		items => [$rs->all()],
-		pages => $rs->pager()->last_page
-	};
-};
-
-sub getCategoriesTree {
-	my $db = Shop::DB::db();
-	my $rs = $db->resultset('Category')->search(undef, {
-		join => 'catalogs',
-		'+select' => { count => 'catalogs.id' },
-		'+as' => 'items',
-		group_by => 'me.id'
-	});
-	my $result = { content => {} };
-	while (my $category = $rs->next) {
-		my (undef, @loc) = (split(/,/, $category->location), $category->id);
-		my $h = $result;
-		$h = $h->{'content'}->{$_} //= {} foreach @loc;
-		$h->{'name'} = $category->name;
-		$h->{'count'} = $category->get_column('items');
-	}
-	sub setItemsCount {
-		my $content = shift;
-		my $sum = 0;
-		$sum += $content->{$_}->{'count'} += setItemsCount($content->{$_}->{'content'})
-			foreach keys %$content;
-		return $sum;
-	}
-	setItemsCount($result->{'content'});
-	return $result->{'content'};
-};
-
-get '/categories/' => sub {
-	template 'categories', {
-		title => 'Все категории',
-		categories => getCategoriesTree()
-	};
-};
+load 'catalog.pl', 'users.pl', 'cart.pl';
 
 true;

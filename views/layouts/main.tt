@@ -1,16 +1,74 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-type" content="text/html; charset=<% settings.charset %>" />
-<title>Shop<% IF !title %>!<% ELSE %> - <% title %><% END %></title>
-<link rel="stylesheet" href="<% request.uri_base %>/css/style.css" />
-</head>
-<body>
-<a href="/"><h1>Shop!</h1></a>
-<a href="/catalog/">Каталог</a>
-<a href="/categories/">Категории</a>
-<hr>
+﻿<!DOCTYPE html>
+<html lang="ru-RU">
+	<head>
+		<meta charset="<% settings.charset %>">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="keywords" content="купить, смартфоны, планшеты, ноутбуки, телевизоры, фотоаппараты, широкий выбор, низкие цены, Сеть супермаркетов цифровой и бытовой техники Shop!">
+		<meta name="description" content="Сеть супермаркетов цифровой и бытовой техники Shop!: Смартфоны, Планшеты, Ноутбуки, Телевизоры, Фотоаппараты, широкий выбор, низкие цены">
+		<meta name="author" content="">
+		<link rel="icon" href="favicon.ico">
+		
+		<title>Shop<% IF !title %>!<% ELSE %> - <% title; END %></title>
+		
+		<link href="/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/css/style.css" rel="stylesheet">
+		<!-- <% request.uri_base %> -->
+	</head>
+	<body>
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/">Shop!</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<% FOREACH link in vars.menu %>
+						<li<% IF link.href == request.path_info %> class="active"<% END %>><a href="<% link.href %>"><% link.name %></a></li>
+					<% END %>
+				</ul>
+				<ul class="nav navbar-right">
+					<a href="/login" class="btn btn-default navbar-btn hidden-lg hidden-xs">Вход</a>
+					<a href="/register" class="btn btn-success navbar-btn">Регистрация</a>
+				</ul>
+				<form action="/login" method="post" class="navbar-form navbar-right visible-lg visible-xs">
+					<div class="form-group">
+						<input type="text" placeholder="Email" class="form-control">
+					</div>
+					<div class="form-group">
+						<input type="password" placeholder="Пароль" class="form-control">
+					</div>
+					<button type="submit" class="btn btn-default">Вход</button>
+				</form>
+			</div><!--/.nav-collapse -->
+		</div>
+	</nav>
+	
+	<!--<a href="/cabinet/">Личный кабинет</a>
+	<a href="/manager/">Управление</a>-->
+	
+<div class="container" style="color: #ddd; border: 1px solid green; display: none">
+	<span class="visible-xs">Extra small (&lt;768px)		</span>
+	<span class="visible-sm">Small devices (>=768px)	</span>
+	<span class="visible-md">Medium devices (>=992px)	</span>
+	<span class="visible-lg">Large devices (>=1200px)	</span>
+</div>
+<main class="container">
+<% IF header %><div class="page-header"><h3><% header %></h3></div><% END %>
 <% content %>
-</body>
+</main>
+
+		<footer class="container">
+			&copy; 2015 Shop!
+		</footer>
+		<script src="/js/jquery.min.js"></script>
+		<script src="/js/bootstrap.min.js"></script>
+		<script src="/js/script.js"></script>
+	</body>
 </html>

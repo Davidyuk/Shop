@@ -1,7 +1,1 @@
-﻿<table border="1">
-<% FOREACH i IN items %>
-	<tr><td><% i.id %></td>
-	<td><% i.name %></td>
-	<td><% i.location %></td></tr>
-<% END %>
-</table>
+﻿Index.tt
