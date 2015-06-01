@@ -7,7 +7,7 @@
 		<meta name="keywords" content="купить, смартфоны, планшеты, ноутбуки, телевизоры, фотоаппараты, широкий выбор, низкие цены, Сеть супермаркетов цифровой и бытовой техники Shop!">
 		<meta name="description" content="Сеть супермаркетов цифровой и бытовой техники Shop!: Смартфоны, Планшеты, Ноутбуки, Телевизоры, Фотоаппараты, широкий выбор, низкие цены">
 		<meta name="author" content="">
-		<link rel="icon" href="favicon.ico">
+		<!--<link rel="icon" href="favicon.ico">-->
 		
 		<title>Shop<% IF !title %>!<% ELSE %> - <% title; END %></title>
 		
@@ -30,22 +30,32 @@
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
 					<% FOREACH link in vars.menu %>
-						<li<% IF link.href == request.path_info %> class="active"<% END %>><a href="<% link.href %>"><% link.name %></a></li>
+						<li<% IF link.href == request.path_info %> class="active"<% END %>><a href="<% link.href %>"><% link.name %>
+							<% IF link.href == "/cart/" %> <span class="badge badge-cart"><% IF session.cart && (session.cart.keys.max != -1); session.cart.keys.max + 1; END %></span><% END %>
+						</a></li>
 					<% END %>
 				</ul>
+				<% IF session.user_id %>
+				<ul class="nav navbar-nav navbar-right">
+					<li<% IF request.path_info == "/cabinet/" %> class="active"<% END %>><a href="/cabinet/"><% IF session.user_name; session.user_name; ELSE; "Личный кабинет"; END %></a></li>
+					<li class="divider-vertical"></li>
+					<a href="/logout" class="btn btn-default navbar-btn">Выход</a>
+				</ul>
+				<% ELSE %>
 				<ul class="nav navbar-right">
 					<a href="/login" class="btn btn-default navbar-btn hidden-lg hidden-xs">Вход</a>
 					<a href="/register" class="btn btn-success navbar-btn">Регистрация</a>
 				</ul>
 				<form action="/login" method="post" class="navbar-form navbar-right visible-lg visible-xs">
 					<div class="form-group">
-						<input type="text" placeholder="Email" class="form-control">
+						<input name="email" type="email" placeholder="Email" class="form-control">
 					</div>
 					<div class="form-group">
-						<input type="password" placeholder="Пароль" class="form-control">
+						<input name="password" type="password" placeholder="Пароль" class="form-control">
 					</div>
 					<button type="submit" class="btn btn-default">Вход</button>
 				</form>
+				<% END %>
 			</div><!--/.nav-collapse -->
 		</div>
 	</nav>
@@ -60,12 +70,20 @@
 	<span class="visible-lg">Large devices (>=1200px)	</span>
 </div>
 <main class="container">
-<% IF header %><div class="page-header"><h3><% header %></h3></div><% END %>
+<% IF header %><div class="page-header"><h3><% header %></h3></div><% END;
+IF session.messages;
+FOREACH message in session.messages %>
+<div class="alert alert-<% message.type %> alert-dismissable">
+	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	<% message.text %>
+</div>
+<% END;
+END %>
 <% content %>
 </main>
 
 		<footer class="container">
-			&copy; 2015 Shop!
+			<p>&copy; 2015 Shop!</p>
 		</footer>
 		<script src="/js/jquery.min.js"></script>
 		<script src="/js/bootstrap.min.js"></script>

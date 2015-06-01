@@ -59,8 +59,8 @@ IF items.size %>
 			<td><a href="/item/?id=<% id.id %>"><% id.name %></a></td>
 			<td class="text-nowrap buttons">
 				<div class="btn-group">
-					<button type="button" class="btn btn-xs btn-default">
-						<span class="visible-lg-inline">В корзину</span>
+					<button type="button" class="btn btn-xs <% t = id.id; IF session.cart.$t %>btn-success<% ELSE %>btn-default<% END %> btn-cart" data-id="<% id.id %>">
+						<span class="visible-lg-inline"><% IF session.cart.$t %>В корзине<% ELSE %>В корзину<% END %></span>
 						<span class="glyphicon glyphicon-shopping-cart"></span>
 					</button>
 				</div>

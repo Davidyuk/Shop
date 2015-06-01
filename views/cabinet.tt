@@ -8,26 +8,26 @@
 	<div class="form-group">
 		<label class="col-sm-2 control-label" for="email">Электронная почта</label></td>
 		<div class="col-sm-10">
-			<input class="form-control" value="<% params.email %>" id="email" type="email" name="email" placeholder="example@example.com" required>
+			<input class="form-control" value="<% vars.user.email %>" id="email" type="email" name="email" placeholder="example@example.com" required>
 		</div>
 	</div>
 	<div class="form-group">
 		<label class="col-sm-2 control-label" for="sname">Фамилия</label></td>
 		<div class="col-sm-10">
-			<input class="form-control" value="<% params.sname %>" id="sname" type="text" name="sname">
+			<input class="form-control" value="<% vars.user.sname %>" id="sname" type="text" name="sname">
 		</div>
 	</div>
 	<div class="form-group">
 		<label class="col-sm-2 control-label" for="name">Имя</label></td>
 		<div class="col-sm-10">
-			<input class="form-control" value="<% params.name %>" id="name" type="text" name="name">
+			<input class="form-control" value="<% vars.user.name %>" id="name" type="text" name="name">
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-2 control-label" for="payment_method">Предпочитаемый способ оплаты</label></td>
+		<label class="col-sm-2 control-label" for="payment">Предпочитаемый способ оплаты</label></td>
 		<div class="col-sm-10">
-			<input class="form-control" value="<% params.payment_method %>" id="payment_method" type="text" list="payment_method_list" name="payment_method">
-			<datalist id="payment_method_list">
+			<input class="form-control" value="<% vars.user.payment %>" id="payment" type="text" list="payment_list" name="payment">
+			<datalist id="payment_list">
 				<option>Безналичный расчёт</option>
 				<option>Наличный расчёт</option>
 			</datalist>
@@ -36,46 +36,35 @@
 	<div class="form-group">
 		<label class="col-sm-2 control-label" for="address">Адрес для доставки</label></td>
 		<div class="col-sm-10">
-			<input class="form-control" value="<% params.address %>" id="address" type="text" name="address">
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-2 control-label" for="password">Пароль</label></td>
-		<div class="col-sm-10">
-			<input class="form-control" value="<% params.password %>" id="password" type="password" name="password" onfocus="checkPassword();" oninput="checkPassword();" required>
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-2 control-label" for="password_rep">Подтверждение</label></td>
-		<div class="col-sm-10">
-			<input class="form-control" value="<% params.password %>" id="password_rep" type="password" name="password_rep" onfocus="checkPassword();" oninput="checkPassword();" required>
+			<input class="form-control" value="<% vars.user.address %>" id="address" type="text" name="address">
 		</div>
 	</div>
 	<div class="form-group">
 		<div class="col-sm-offset-2 col-sm-10">
-			<button  class="btn btn-default" type="submit">Зарегистрироваться</button>
+			<button  class="btn btn-default" type="submit">Сохранить изменения</button>
 		</div>
 	</div>
+	<input type="hidden" name="action" value="user_info">
 </form>
-<form>
+<form class="form-horizontal" method="post">
 	<fieldset>
 		<legend>Изменения пароля</legend>
 		<div class="form-group">
 			<label class="col-sm-2 control-label" for="password_old">Старый пароль</label></td>
 			<div class="col-sm-10">
-				<input class="form-control" value="<% params.password_old %>" id="password_old" type="password" name="password_old" required>
+				<input class="form-control" id="password_old" type="password" name="password_old" required>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label" for="password">Пароль</label></td>
 			<div class="col-sm-10">
-				<input class="form-control" value="<% params.password %>" id="password" type="password" name="password" onfocus="checkPassword();" oninput="checkPassword();" required>
+				<input class="form-control" id="password" type="password" name="password" onfocus="checkPassword();" oninput="checkPassword();" required>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label" for="password_rep">Подтверждение</label></td>
 			<div class="col-sm-10">
-				<input class="form-control" value="<% params.password %>" id="password_rep" type="password" name="password_rep" onfocus="checkPassword();" oninput="checkPassword();" required>
+				<input class="form-control" id="password_rep" type="password" name="password_rep" onfocus="checkPassword();" oninput="checkPassword();" required>
 			</div>
 		</div>
 		<div class="form-group">
@@ -83,5 +72,6 @@
 				<button  class="btn btn-default" type="submit">Изменить пароль</button>
 			</div>
 		</div>
+		<input type="hidden" name="action" value="password">
 	</fieldset>
 </form>

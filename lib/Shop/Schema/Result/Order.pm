@@ -1,12 +1,12 @@
 use utf8;
-package Shop::Schema::Result::User;
+package Shop::Schema::Result::Order;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
 
 =head1 NAME
 
-Shop::Schema::Result::User
+Shop::Schema::Result::Order
 
 =cut
 
@@ -15,11 +15,11 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
-=head1 TABLE: C<users>
+=head1 TABLE: C<orders>
 
 =cut
 
-__PACKAGE__->table("users");
+__PACKAGE__->table("orders");
 
 =head1 ACCESSORS
 
@@ -28,35 +28,20 @@ __PACKAGE__->table("users");
   data_type: 'integer'
   is_auto_increment: 1
   is_nullable: 0
-  sequence: 'users_id_seq'
+  sequence: 'orders_id_seq'
 
-=head2 role
+=head2 user_id
 
-  data_type: 'enum'
-  extra: {custom_type_name => "role",list => ["admin","manager","user"]}
+  data_type: 'integer'
+  is_foreign_key: 1
   is_nullable: 1
 
-=head2 email
+=head2 status
 
   data_type: 'text'
   is_nullable: 1
 
-=head2 passhash
-
-  data_type: 'text'
-  is_nullable: 1
-
-=head2 salt
-
-  data_type: 'text'
-  is_nullable: 1
-
-=head2 name
-
-  data_type: 'text'
-  is_nullable: 1
-
-=head2 sname
+=head2 comment
 
   data_type: 'text'
   is_nullable: 1
@@ -79,23 +64,13 @@ __PACKAGE__->add_columns(
     data_type         => "integer",
     is_auto_increment => 1,
     is_nullable       => 0,
-    sequence          => "users_id_seq",
+    sequence          => "orders_id_seq",
   },
-  "role",
-  {
-    data_type => "enum",
-    extra => { custom_type_name => "role", list => ["admin", "manager", "user"] },
-    is_nullable => 1,
-  },
-  "email",
+  "user_id",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
+  "status",
   { data_type => "text", is_nullable => 1 },
-  "passhash",
-  { data_type => "text", is_nullable => 1 },
-  "salt",
-  { data_type => "text", is_nullable => 1 },
-  "name",
-  { data_type => "text", is_nullable => 1 },
-  "sname",
+  "comment",
   { data_type => "text", is_nullable => 1 },
   "address",
   { data_type => "text", is_nullable => 1 },
@@ -117,24 +92,44 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
 
-=head2 orders
+=head2 orders_items
 
 Type: has_many
 
-Related object: L<Shop::Schema::Result::Order>
+Related object: L<Shop::Schema::Result::OrdersItem>
 
 =cut
 
 __PACKAGE__->has_many(
-  "orders",
-  "Shop::Schema::Result::Order",
-  { "foreign.user_id" => "self.id" },
+  "orders_items",
+  "Shop::Schema::Result::OrdersItem",
+  { "foreign.order_id" => "self.id" },
   { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 user
+
+Type: belongs_to
+
+Related object: L<Shop::Schema::Result::User>
+
+=cut
+
+__PACKAGE__->belongs_to(
+  "user",
+  "Shop::Schema::Result::User",
+  { id => "user_id" },
+  {
+    is_deferrable => 0,
+    join_type     => "LEFT",
+    on_delete     => "NO ACTION",
+    on_update     => "NO ACTION",
+  },
 );
 
 
 # Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-06-01 10:12:38
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:QVNZyxEsVJKwRhBqrXyZTw
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:B0Brx6SVm1EBa7ylxWoL9A
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

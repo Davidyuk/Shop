@@ -41,10 +41,10 @@ END;
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-2 control-label" for="payment_method">Предпочитаемый способ оплаты</label></td>
+		<label class="col-sm-2 control-label" for="payment">Предпочитаемый способ оплаты</label></td>
 		<div class="col-sm-10">
-			<input class="form-control" value="<% params.payment_method %>" id="payment_method" type="text" list="payment_method_list" name="payment_method">
-			<datalist id="payment_method_list">
+			<input class="form-control" value="<% params.payment %>" id="payment" type="text" list="payment_list" name="payment">
+			<datalist id="payment_list">
 				<option>Безналичный расчёт</option>
 				<option>Наличный расчёт</option>
 			</datalist>

@@ -4,8 +4,8 @@
 	<tr><td class="category">Стоимость</td><td>
 		<% item.price %><span class="glyphicon glyphicon-ruble" aria-hidden="true"></span>
 		<div class="btn-group pull-right"><!--hidden-lg-->
-			<button type="button" class="btn btn-xs btn-default">
-				<span>В корзину</span>
+			<button type="button" class="btn btn-xs <% t = item.id; IF session.cart.$t %>btn-success<% ELSE %>btn-default<% END %> btn-cart" data-id="<% item.id %>">
+				<span><% IF session.cart.$t %>В корзине<% ELSE %>В корзину<% END %></span>
 				<span class="glyphicon glyphicon-shopping-cart"></span>
 			</button>
 			<ul class="dropdown-menu dropdown-menu-right" role="menu">

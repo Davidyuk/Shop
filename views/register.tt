@@ -1,10 +1,4 @@
-﻿<% IF message %>
-<div class="alert alert-<% message.type %> alert-dismissable">
-	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-	<% message.text %>
-</div>
-<% END %>
-<script>
+﻿<script>
 function checkPassword(p1, p2) {
 	p1 = document.getElementById('password');
 	p2 = document.getElementById('password_rep');
@@ -19,53 +13,53 @@ function checkPassword(p1, p2) {
 </script>
 <form class="form-horizontal" method="post">
 	<div class="form-group">
-		<label class="col-sm-2 control-label" for="email">Электронная почта</label></td>
-		<div class="col-sm-10">
-			<input class="form-control" value="<% params.email %>" id="email" type="email" name="email" placeholder="example@example.com" required>
+		<label class="col-sm-3 control-label" for="email">Электронная почта</label></td>
+		<div class="col-sm-9">
+			<input class="form-control" value="<% params.email %>" id="email" type="email" name="email" placeholder="example@example.ru" required>
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-2 control-label" for="sname">Фамилия</label></td>
-		<div class="col-sm-10">
-			<input class="form-control" value="<% params.sname %>" id="sname" type="text" name="sname">
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-2 control-label" for="name">Имя</label></td>
-		<div class="col-sm-10">
+		<label class="col-sm-3 control-label" for="name">Имя</label></td>
+		<div class="col-sm-9">
 			<input class="form-control" value="<% params.name %>" id="name" type="text" name="name">
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-2 control-label" for="payment_method">Предпочитаемый способ оплаты</label></td>
-		<div class="col-sm-10">
-			<input class="form-control" value="<% params.payment_method %>" id="payment_method" type="text" list="payment_method_list" name="payment_method">
-			<datalist id="payment_method_list">
+		<label class="col-sm-3 control-label" for="sname">Фамилия</label></td>
+		<div class="col-sm-9">
+			<input class="form-control" value="<% params.sname %>" id="sname" type="text" name="sname">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label" for="payment">Предпочитаемый способ оплаты</label></td>
+		<div class="col-sm-9">
+			<input class="form-control" value="<% params.payment %>" id="payment" type="text" list="payment_list" name="payment">
+			<datalist id="payment_list">
 				<option>Безналичный расчёт</option>
 				<option>Наличный расчёт</option>
 			</datalist>
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-2 control-label" for="address">Адрес для доставки</label></td>
-		<div class="col-sm-10">
+		<label class="col-sm-3 control-label" for="address">Адрес для доставки</label></td>
+		<div class="col-sm-9">
 			<input class="form-control" value="<% params.address %>" id="address" type="text" name="address">
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-2 control-label" for="password">Пароль</label></td>
-		<div class="col-sm-10">
-			<input class="form-control" value="<% params.password %>" id="password" type="password" name="password" onfocus="checkPassword();" oninput="checkPassword();" required>
+		<label class="col-sm-3 control-label" for="password">Пароль</label></td>
+		<div class="col-sm-9">
+			<input class="form-control" id="password" type="password" name="password" onfocus="checkPassword();" oninput="checkPassword();" required>
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-2 control-label" for="password_rep">Подтверждение</label></td>
-		<div class="col-sm-10">
-			<input class="form-control" value="<% params.password %>" id="password_rep" type="password" name="password_rep" onfocus="checkPassword();" oninput="checkPassword();" required>
+		<label class="col-sm-3 control-label" for="password_rep">Подтверждение</label></td>
+		<div class="col-sm-9">
+			<input class="form-control" id="password_rep" type="password" name="password_rep" onfocus="checkPassword();" oninput="checkPassword();" required>
 		</div>
 	</div>
 	<div class="form-group">
-		<div class="col-sm-offset-2 col-sm-10">
+		<div class="col-sm-offset-3 col-sm-9">
 			<button  class="btn btn-default" type="submit">Зарегистрироваться</button>
 		</div>
 	</div>

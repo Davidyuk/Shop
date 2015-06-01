@@ -26,7 +26,9 @@ sub getCategoriesIds {
 	return [$rs->get_column('id')->all(), $_[0]];
 }
 
+my $categoriesTree;
 sub getCategoriesTree {
+	return $categoriesTree if (defined $categoriesTree);
 	my $db = Shop::DB::db();
 	my $rs = $db->resultset('CategoryJoined');
 	my $result = { content => {} };
@@ -47,17 +49,18 @@ sub getCategoriesTree {
 		return $sum;
 	}
 	setItemsCount($result->{'content'});
+	$categoriesTree = $result->{'content'};
 	return $result->{'content'};
 };
 
 get '/' => sub {
 	my $db = Shop::DB::db();
 	
-	my $rs = $db->resultset('CatalogJoined')->search({
+	my $rs = $db->resultset('ItemJoined')->search({
 		params->{'search'}		? ( 'me.name' => { like => '%'.params->{'search'}.'%' } ) : () ,
 		params->{'category'}	? ( category_id => getCategoriesIds(params->{'category'}) ) : ()
 	}, {
-		rows => 30, page => (params->{'page'}) ? params->{'page'} : 1 
+		rows => 15, page => (params->{'page'}) ? params->{'page'} : 1 
 	});
 	#my $rs = $db->resultset('Catalog')->search({
 	#	params->{'search'}		? ( 'me.name' => { like => '%'.params->{'search'}.'%' } ) : () ,
@@ -81,7 +84,7 @@ get '/' => sub {
 
 get '/item/' => sub {
 	my $db = Shop::DB::db();
-	my $rs = $db->resultset('CatalogJoined')->search(
+	my $rs = $db->resultset('ItemJoined')->search(
 		{ id => params->{'id'} }, undef);
 	my $item = $rs->next;
 	if (defined $item) {

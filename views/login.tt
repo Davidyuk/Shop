@@ -1,23 +1,17 @@
-﻿<% IF message %>
-<div class="alert alert-<% message.type %> alert-dismissable">
-	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-	<% message.text %>
-</div>
-<% END %>
-<form class="form-horizontal">
+﻿<form class="form-horizontal" method="post">
   <div class="form-group">
-    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+    <label for="email" class="col-sm-2 control-label">Email</label>
     <div class="col-sm-10">
-      <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+      <input id="email" type="email" name="email" class="form-control" placeholder="Email">
     </div>
   </div>
   <div class="form-group">
-    <label for="inputPassword3" class="col-sm-2 control-label">Пароль</label>
+    <label for="password" class="col-sm-2 control-label">Пароль</label>
     <div class="col-sm-10">
-      <input type="password" class="form-control" id="inputPassword3" placeholder="Пароль">
+      <input id="password" type="password" name="password" class="form-control" placeholder="Пароль">
     </div>
   </div>
-  <div class="form-group">
+  <!--<div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <div class="checkbox">
         <label>
@@ -25,7 +19,7 @@
         </label>
       </div>
     </div>
-  </div>
+  </div>-->
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <button type="submit" class="btn btn-default">Войти</button>

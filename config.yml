@@ -21,13 +21,15 @@ charset: "utf-8"
 #template: "simple"
 
 template: "template_toolkit"
-# engines:
-#   template_toolkit:
+
+#engines:
+#  template_toolkit:
+#    EVAL_PERL: 1
 #     recursion: 1
 #     start_tag: '[%'
 #     end_tag:   '%]'
 
 # For session support enable the following line and see Dancer::Session
-# session: "YAML"
+session: "YAML"
 
 port: 80
