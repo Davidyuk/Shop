@@ -43,4 +43,59 @@ jQuery(document).ready(function($) {
 		$(this).toggleClass('btn-success');
 		setCartCount(cart_count + (cart[$(this).data('id')] ? 1 : -1));
 	});
+	
+	
+	function updateFinalPrice() {
+		var prices = $('.cart .price');
+		var inputs = $('.cart input');
+		var sum = 0;
+		for (var i = 0; i < prices.length; i++)
+			sum += $(prices[i]).text() * $(inputs[i]).val();
+		$('#final-price').text(sum);
+		return prices.length;
+	}
+	
+	$('.cart .btn-cart-delete').click(function() {
+		if (confirm('Вы уверены, что хотите удалить этот элемент из корзины?')) {
+			$(this).parent().parent().parent().remove();
+			setCartCount(cart_count - 1);
+			if (!updateFinalPrice())
+				$('.cart').replaceWith($('<p/>', {text: 'Корзина не содержит элементов.'}));
+			$.get('/cartajax', {
+				item: $(this).parents('.buttons').data('id'),
+				action: 'remove'
+			}).error(networkError);
+		}
+	});
+	
+	$('.cart .btn-cart-add').click(function() {
+		var i = $($(this).parent().next('input')[0]).val() * 1 + 1;
+		$($(this).parent().next('input')[0]).val(i);
+		if (i) $($(this).parent().next().next('span').children('button')[0]).attr("disabled", false);
+		updateFinalPrice();
+		$.get('/cartajax', {
+			item: $(this).parents('.buttons').data('id'),
+			count: i
+		}).error(networkError);
+	});
+	
+	$('.cart .btn-cart-sub').click(function() {
+		var i = $($(this).parent().prev('input')[0]).val() * 1 - 1;
+		$($(this).parent().prev('input')[0]).val(i);
+		if (!i) $(this).attr("disabled", true);
+		updateFinalPrice();
+		$.get('/cartajax', {
+			item: $(this).parents('.buttons').data('id'),
+			count: i
+		}).error(networkError);
+	});
+	
+	$('.cart input').keyup(function() {
+		this.value = this.value.replace(/[^0-9\.]/g,'');
+		updateFinalPrice();
+		$.get('/cartajax', {
+			item: $(this).parents('.buttons').data('id'),
+			count: this.value
+		}).error(networkError);
+	});
 });

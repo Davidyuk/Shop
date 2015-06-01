@@ -53,14 +53,13 @@ IF items.size %>
 		IF (category_name != id.category_name) && (id.category_name != breadcrumbs.$breadcrumb_curr.name) ;
 			"\n\t"%><tr class="category"><td colspan="2" class="category"><a href="<% request.path_info %>?category=<% id.category_id %>"><% id.category_name %></a></td></tr><%
 			SET category_name = id.category_name;
-		END;
-		IF !id.SUM_stocks_count; id.SUM_stocks_count = 0; END %>
+		END %>
 		<tr class="item" data-url="/item/?id=<% id.id %>">
 			<td><a href="/item/?id=<% id.id %>"><% id.name %></a></td>
 			<td class="text-nowrap buttons">
 				<div class="btn-group">
-					<button type="button" class="btn btn-xs <% t = id.id; IF session.cart.$t %>btn-success<% ELSE %>btn-default<% END %> btn-cart" data-id="<% id.id %>">
-						<span class="visible-lg-inline"><% IF session.cart.$t %>В корзине<% ELSE %>В корзину<% END %></span>
+					<button type="button" class="btn btn-xs <% t = id.id; IF session.cart.$t != "" %>btn-success<% ELSE %>btn-default<% END %> btn-cart" data-id="<% id.id %>">
+						<span class="visible-lg-inline"><% IF session.cart.$t != "" %>В корзине<% ELSE %>В корзину<% END %></span>
 						<span class="glyphicon glyphicon-shopping-cart"></span>
 					</button>
 				</div>
@@ -128,7 +127,7 @@ ELSE;
 		"\n";%><li>Попробуйте использовать более популярные ключевые слова.</li><%
 		"\n";%></ul><%
 	ELSE;
-		"\n";%>Категория <b><% breadcrumbs.$breadcrumb_curr.name %></b> не содержит элементов.<%
+		"\n";%><p>Категория <b><% breadcrumbs.$breadcrumb_curr.name %></b> не содержит элементов.</p><%
 	END;
 END; %>
 
