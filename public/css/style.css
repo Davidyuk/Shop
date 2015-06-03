@@ -6,11 +6,14 @@
 }
 .catalog .item td:nth-child(1) {
 	padding: 0;
+	overflow: hidden;
 }
 .catalog .item td:nth-child(1) a {
 	color: #333333;
-	padding: 5px; /* 8px для не table-condensed */
+	/* padding: 5px; 8px для не table-condensed */
 	display: block;
+	margin: -100px; /* http://stackoverflow.com/questions/3966027/make-link-in-table-cell-fill-the-entire-row-height */
+    padding: 105px;
 }
 .catalog .item td:nth-child(1) a:hover {
 	text-decoration: underline;

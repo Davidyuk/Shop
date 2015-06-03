@@ -30,14 +30,37 @@
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
 					<% FOREACH link in vars.menu %>
-						<li<% IF link.href == request.path_info %> class="active"<% END %>><a href="<% link.href %>"><% link.name %>
-							<% IF link.href == "/cart/" %> <span class="badge badge-cart"><% IF session.cart && (session.cart.keys.max != -1); session.cart.keys.max + 1; END %></span><% END %>
-						</a></li>
+						<li<% IF link.href == request.path_info#.substr(0, link.href.length) %> class="active"<% END %>>
+							<a<% IF link.dropdown %> class="dropdown-toggle" data-toggle="dropdown"<% END %> href="<% link.href %>"><% link.name %>
+								<% IF link.href == "/cart/" %> <span class="badge badge-cart"><% IF session.cart && (session.cart.keys.max != -1); session.cart.keys.max + 1; END %></span><% END %>
+								<% IF link.dropdown %> <b class="caret"></b><% END %>
+							</a>
+							<% IF link.dropdown %>
+							<ul class="dropdown-menu">
+								<% FOREACH item in link.dropdown %>
+								<li><a href="<% item.href %>"><% item.name %></a></li>
+								<% END %>
+							</ul>
+							<% END %>
+						</li>
 					<% END %>
 				</ul>
 				<% IF session.user_id %>
 				<ul class="nav navbar-nav navbar-right">
-					<li<% IF request.path_info == "/cabinet/" %> class="active"<% END %>><a href="/cabinet/"><% IF session.user_name; session.user_name; ELSE; "Личный кабинет"; END %></a></li>
+					<li<% IF request.path_info == "/cabinet/" %> class="active"<% END %>>
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+							<% IF session.user_name; session.user_name; ELSE; "Личный кабинет"; END %>
+							<b class="caret"></b>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="/orders/">Состояние заказов</a></li>
+							<% IF session.user_role == "admin" || session.user_role == "manager" %>
+								<li><a href="/manager/">Администрирование</a></li>
+							<% END %>
+							<li class="divider"></li>
+							<li><a href="/cabinet/">Редактирование профиля</a></li>
+						</ul>
+					</li>
 					<li class="divider-vertical"></li>
 					<a href="/logout" class="btn btn-default navbar-btn">Выход</a>
 				</ul>

@@ -5,22 +5,22 @@ IF items.size %>
 	t = id.id;
 	final_price = final_price + id.price * session.cart.$t;
 	%>
-		<tr class="item" data-url="/item/?id=<% id.id %>">
+		<tr class="item">
 			<td><a href="/item/?id=<% id.id %>"><% id.name %></a></td>
 			<td class="text-nowrap buttons" data-id="<% id.id %>">
 				<div class="form-group">
 					<div class="input-group">
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-sm btn-success btn-cart-add">
-								<span class="visible-lg-inline">Добавить</span>
+								<!--<span class="visible-lg-inline">Больше</span>-->
 								<span class="glyphicon glyphicon-plus"></span>
 							</button>
 						</span>
 						<input type="text" class="form-control input-sm" value="<% session.cart.$t %>">
-						<!--<span class="input-group-addon visible-lg">шт.</span>-->
+						<!--<span class="input-group-addon">ед.</span>-->
 						<span class="input-group-btn">
 							<button type="button" class="btn btn-sm btn-danger btn-cart-sub"<% IF session.cart.$t == 0 %> disabled<% END %>>
-								<span class="visible-lg-inline">Удалить</span>
+								<!--<span class="visible-lg-inline">Меньше</span>-->
 								<span class="glyphicon glyphicon-minus"></span>
 							</button>
 						</span>
@@ -37,13 +37,13 @@ IF items.size %>
 						SET stores_id = id.stores_id.split('\|');
 						SET stores_name = id.stores_name.split('\|');
 						FOREACH i IN [0 .. stores_id.max] %>
-							<li><a href="/stores/id=<% stores_id.$i %>"><% stores_name.$i %></a></li><%
+							<li><a href="/stores?id=<% stores_id.$i %>"><% stores_name.$i %></a></li><%
 						END %>
 					</ul>
 				</div>
 				<div class="btn-group">
 					<button type="button" class="btn btn-sm btn-default btn-cart-delete">
-						<span class="visible-lg-inline">Убрать из списка</span>
+						<span class="visible-lg-inline">Удалить</span>
 						<span class="glyphicon glyphicon-remove"></span>
 					</button>
 				</div>

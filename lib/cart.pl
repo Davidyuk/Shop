@@ -1,4 +1,5 @@
-﻿use utf8;
+﻿use Shop::DB qw(db);
+use utf8;
 
 get '/order/' => sub {
 	template 'order', {
@@ -23,8 +24,7 @@ get '/cartajax' => sub {
 };
 
 get '/cart/' => sub {
-	my $db = Shop::DB::db();
-	my $rs = $db->resultset('ItemJoined')->search({
+	my $rs = db()->resultset('ItemJoined')->search({
 		'me.id' => session('cart')	? ( [keys(%{session('cart')})] ) : ()
 	}, {
 		rows => 15, page => (params->{'page'}) ? params->{'page'} : 1 

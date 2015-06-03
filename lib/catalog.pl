@@ -1,25 +1,24 @@
-﻿use utf8;
+﻿use Shop::DB qw(db);
+use utf8;
 
 sub getCategoriesBreadcrumbs {
-	my $db = Shop::DB::db();
-	my $category = $db->resultset('Category')->find($_[0]);
+	my $category = db()->resultset('Category')->find($_[0]);
 	return undef unless ($category);
 	
-	my $rs = $db->resultset('Category')->search({
+	my $rs = db()->resultset('Category')->search({
 		id => [ split(/,/, $category->location) ]
 	});
 	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
 	
-	return [$rs->all(), { name => $category->name }];
+	return [$rs->all(), { id => $_[0], name => $category->name, is_last => true }];
 };
 
 sub getCategoriesIds {
-	my $db = Shop::DB::db();
-	my $category = $db->resultset('Category')->find($_[0]);
+	my $category = db()->resultset('Category')->find($_[0]);
 	return undef unless ($category);
 	
 	my $loc = $category->location.','.$_[0];
-	my $rs = $db->resultset('Category')->search({
+	my $rs = db()->resultset('Category')->search({
 		location => [ $loc, { like => $loc.',%' } ]
 	});
 	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
@@ -28,9 +27,8 @@ sub getCategoriesIds {
 
 my $categoriesTree;
 sub getCategoriesTree {
-	return $categoriesTree if (defined $categoriesTree);
-	my $db = Shop::DB::db();
-	my $rs = $db->resultset('CategoryJoined');
+	return $categoriesTree if defined $categoriesTree;
+	my $rs = db()->resultset('CategoryJoined');
 	my $result = { content => {} };
 	while (my $category = $rs->next) {
 		my (undef, @loc) = (split(/,/, $category->location), $category->id);
@@ -54,24 +52,12 @@ sub getCategoriesTree {
 };
 
 get '/' => sub {
-	my $db = Shop::DB::db();
-	
-	my $rs = $db->resultset('ItemJoined')->search({
+	my $rs = db()->resultset('ItemJoined')->search({
 		params->{'search'}		? ( 'me.name' => { like => '%'.params->{'search'}.'%' } ) : () ,
 		params->{'category'}	? ( category_id => getCategoriesIds(params->{'category'}) ) : ()
 	}, {
 		rows => 15, page => (params->{'page'}) ? params->{'page'} : 1 
 	});
-	#my $rs = $db->resultset('Catalog')->search({
-	#	params->{'search'}		? ( 'me.name' => { like => '%'.params->{'search'}.'%' } ) : () ,
-	#	params->{'category'}	? ( category_id => getCategoriesIds(params->{'category'}) ) : ()
-	#}, {
-	#	join => ['category', 'stocks'],
-	#	+select => ['SUM(stocks.count)', 'id', 'name', 'price', 'category.name'],
-	#	+as => ['SUM_stocks_count', 'id', 'name', 'price', 'category.name'],
-	#	group_by => ['me.id'],
-	#	rows => 30, page => (params->{'page'}) ? params->{'page'} : 1 
-	#});
 	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
 	template 'catalog', {
 		title => 'Каталог',
@@ -83,14 +69,14 @@ get '/' => sub {
 };
 
 get '/item/' => sub {
-	my $db = Shop::DB::db();
-	my $rs = $db->resultset('ItemJoined')->search(
+	my $rs = db()->resultset('ItemJoined')->search(
 		{ id => params->{'id'} }, undef);
 	my $item = $rs->next;
 	if (defined $item) {
 		template 'item', {
 			title => $item->name,
 			header => $item->name,
+			breadcrumbs => getCategoriesBreadcrumbs($item->category_id),
 			item => $item
 		};
 	} else {

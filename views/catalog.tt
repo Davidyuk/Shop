@@ -30,31 +30,30 @@
 <form method="GET">
 	<div class="form-group">
 		<input type="search" name="search" class="form-control" placeholder="Поиск..." value="<% params.search %>">
-		<!--<input autofocus type="search" name="search" value="<% params.search %>">-->
 		<input type="hidden" name="category" value="<% params.category %>">
 	</div>
 </form><%
-IF breadcrumbs;
-	"\n";%><ul class="breadcrumb"><%
+IF breadcrumbs %>
+	<ul class="breadcrumb"><%
 	FOREACH breadcrumb IN breadcrumbs;
-		IF breadcrumb.id;
-			"\n\t"%><li><a href="<% request.path_info %>?category=<% breadcrumb.id %>"><% breadcrumb.name %></a></li><%
-		ELSE;
-			"\n\t"; %><li class="active"><% breadcrumb.name %></li><%
+		IF breadcrumb.is_last %>
+			<li class="active"><% breadcrumb.name %></li><%
+			category_name = breadcrumb.name;
+		ELSE %>
+			<li><a href="<% request.path_info %>?category=<% breadcrumb.id %>"><% breadcrumb.name %></a></li><%
 		END;
-	END;
-	SET breadcrumb_curr = breadcrumbs.size - 1;
-	"\n";%></ul><%
+	END %>
+	</ul><%
 END;
 IF items.size %>
 <table class="catalog table table-condensed"><%
-	SET category_name = '';
+	SET category_name_last = '';
 	FOREACH id IN items;
-		IF (category_name != id.category_name) && (id.category_name != breadcrumbs.$breadcrumb_curr.name) ;
-			"\n\t"%><tr class="category"><td colspan="2" class="category"><a href="<% request.path_info %>?category=<% id.category_id %>"><% id.category_name %></a></td></tr><%
-			SET category_name = id.category_name;
+		IF (category_name_last != id.category_name) && (id.category_name != category_name) %>
+			<tr class="category"><td colspan="2" class="category"><a href="<% request.path_info %>?category=<% id.category_id %>"><% id.category_name %></a></td></tr><%
+			SET category_name_last = id.category_name;
 		END %>
-		<tr class="item" data-url="/item/?id=<% id.id %>">
+		<tr class="item">
 			<td><a href="/item/?id=<% id.id %>"><% id.name %></a></td>
 			<td class="text-nowrap buttons">
 				<div class="btn-group">
@@ -73,7 +72,7 @@ IF items.size %>
 						SET stores_id = id.stores_id.split('\|');
 						SET stores_name = id.stores_name.split('\|');
 						FOREACH i IN [0 .. stores_id.max] %>
-							<li><a href="/stores/id=<% stores_id.$i %>"><% stores_name.$i %></a></li><%
+							<li><a href="/stores?id=<% stores_id.$i %>"><% stores_name.$i %></a></li><%
 						END %>					
 					</ul>
 				</div>
@@ -116,20 +115,20 @@ IF items.size %>
 		END;
 		"\n"%></ul></nav><%
 	END;
-ELSE;
-	"\n<br>";
-	IF params.search;
-		"\n";%>По запросу <b><% params.search %></b> ничего не найдено.<%
-		"\n";%><p>Рекомендации:</p><%
-		"\n";%><ul><%
-		"\n";%><li>Убедитесь, что все слова написаны без ошибок.</li><%
-		"\n";%><li>Попробуйте использовать другие ключевые слова.</li><%
-		"\n";%><li>Попробуйте использовать более популярные ключевые слова.</li><%
-		"\n";%></ul><%
-	ELSE;
-		"\n";%><p>Категория <b><% breadcrumbs.$breadcrumb_curr.name %></b> не содержит элементов.</p><%
+ELSE %>
+	<br><%
+	IF params.search %>
+		По запросу <b><% params.search %></b> ничего не найдено.
+		<p>Рекомендации:</p>
+		<ul>
+		<li>Убедитесь, что все слова написаны без ошибок.</li>
+		<li>Попробуйте использовать другие ключевые слова.</li>
+		<li>Попробуйте использовать более популярные ключевые слова.</li>
+		</ul><%
+	ELSE %>
+		<p>Категория <b><% category_name %></b> не содержит элементов.</p><%
 	END;
-END; %>
+END %>
 
 </td>
 </tr>

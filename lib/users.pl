@@ -1,4 +1,5 @@
-﻿use utf8;
+﻿use Shop::DB qw(db);
+use utf8;
 
 our $default_path = '/';
 
@@ -8,9 +9,7 @@ sub getUserName {
 }
 
 post '/login' => sub {
-	my $db = Shop::DB::db();
-	
-	my $user = $db->resultset('User')->search({
+	my $user = db()->resultset('User')->search({
 		'email' => params->{email}
 	}, undef)->single();
 	if (defined $user) {
@@ -80,12 +79,11 @@ post '/register' => sub {
 	}
 	
 	if ($valid) {
-		my $db = Shop::DB::db();
-		my $user = $db->resultset('User')->search({
+		my $user = db()->resultset('User')->search({
 			'email' => params->{email}
 		}, undef)->single;
 		if (! defined $user) {
-			my $user = $db->resultset('User')->create({
+			my $user = db()->resultset('User')->create({
 				email => param('email'),
 				passhash => param('password'),
 				salt => 'my salt',
@@ -129,8 +127,7 @@ get '/register' => sub {
 };
 
 post '/cabinet/' => sub {
-	my $db = Shop::DB::db();
-	my $user = $db->resultset('User')->find(session('user_id'));
+	my $user = db()->resultset('User')->find(session('user_id'));
 	if (param('action') eq 'user_info') {
 		$user->email(param('email'));
 		$user->name(param('name'));
@@ -173,8 +170,7 @@ get '/cabinet/' => sub {
 		redirect '/login';
 		return;
 	}
-	my $db = Shop::DB::db();
-	var user => $db->resultset('User')->find(session('user_id'));
+	var user => db()->resultset('User')->find(session('user_id'));
 	template 'cabinet', {
 		title => 'Личный кабинет',
 		header => 'Личный кабинет'

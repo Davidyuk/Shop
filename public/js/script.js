@@ -91,7 +91,8 @@ jQuery(document).ready(function($) {
 	});
 	
 	$('.cart input').keyup(function() {
-		this.value = this.value.replace(/[^0-9\.]/g,'');
+		this.value = this.value.replace(/[^0-9\.]/g,'') * 1;
+		$(this).next().children('button').attr("disabled", !(this.value*1));
 		updateFinalPrice();
 		$.get('/cartajax', {
 			item: $(this).parents('.buttons').data('id'),

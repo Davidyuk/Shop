@@ -16,11 +16,7 @@ function checkPassword(p1, p2) {
 	.registration td:nth-child(1) { text-align: right; }
 	.registration input { width: 200px; }
 	.registration input[type="submit"] { width: auto; }
-</style>--><%
-IF message;
-	"\n";%><span class="<% message.type %>"><% message.text %></span><%
-END;
-%>
+</style>-->
 <form class="form-horizontal" method="post">
 	<div class="form-group">
 		<label class="col-sm-2 control-label" for="email">Электронная почта</label></td>

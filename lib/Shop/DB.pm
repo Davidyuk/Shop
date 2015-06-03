@@ -3,6 +3,10 @@ use strict;
 use warnings;
 use Shop::Schema;
 
+use Exporter;
+our @ISA= qw( Exporter );
+our @EXPORT = qw( db );
+
 my $db;
 
 # db singleton
