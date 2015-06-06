@@ -1,10 +1,99 @@
-﻿<table><tr>
+﻿<style>
+	#catalog .category {
+		background-color: #f5f5f5;
+	}
+	#catalog .item:hover {
+		background-color: #f5f5f5;
+	}
+	#catalog .item td:nth-child(1) {
+		padding: 0;
+		overflow: hidden;
+	}
+	#catalog .item td:nth-child(1) a {
+		color: #333333;
+		/* padding: 5px; 8px для не table-condensed */
+		display: block;
+		margin: -100px; /* http://stackoverflow.com/questions/3966027/make-link-in-table-cell-fill-the-entire-row-height */
+		padding: 105px;
+	}
+	#catalog .item td:nth-child(1) a:hover {
+		text-decoration: underline;
+		color: #333333;
+	}
+	#catalog .buttons { width: 1%; }
+	
+	#categories {
+		width: 220px;
+		position: relative;
+		margin-right: 15px;
+	}
+	#categories .list-group-item {
+		position: static;
+		padding: 0;
+	}
+	#categories .list-group-item:first-child:hover { background: #E7E7E7; }
+	#categories .list-group-item:first-child {
+		padding: 10px 15px;
+		text-transform: uppercase;
+		background: #E7E7E7;
+		color: #555555;
+	}
+	#categories .list-group-item > a {
+		padding: 10px 15px;
+		display: block;
+		color: #333333;
+	}
+	#categories .list-group-item:hover {
+		background: #f5f5f5;
+	}
+	#categories .list-group-item > a:hover {
+		color: #333333;
+	}
+	#categories .list-group-item:hover .plate_wrap {
+		display: block;
+	}
+	#categories .plate_wrap {
+		display: none;
+		position: absolute;
+		top: 45px;
+		bottom: 5px;
+		left: 220px;
+		min-width: 450px;
+		background: #fff;
+		border: 1px solid #ddd;
+		border-left: none;
+		border-radius: 0 4px 4px 0;
+		overflow: hidden;
+		z-index: 1;
+	}
+	#categories .plate {
+		overflow: auto;
+		position: absolute;
+		top: 5px;
+		left: 5px;
+		bottom: 5px;
+		right: 5px;
+	}
+	
+	#categories .plate ul {
+		margin-left: 20px;
+		padding-left: 0;
+	}
+	#categories .plate > ul { margin-left: 0; }
+	
+	#categories .plate > ul > li > a { font-weight: bold; }
+	#categories .plate li { list-style-type: none; }
+	#categories .plate li a, #categories .plate li a:hover { color: #333333; text-decoration: none; }
+	#categories .plate li a:hover span:nth-child(1) { text-decoration: underline; }
+</style>
+
+<table><tr>
 	<td class="visible-lg visible-md">
-		<div class="category_menu list-group">
+		<div id="categories" class="list-group">
 			<%BLOCK list %>
 			<ul><%
 				FOREACH id IN item.keys.nsort %>
-			<li><a href="<% request.path_info %>?category=<% id %>"><span><% item.$id.name %></span>&nbsp;<span class="label label-warning"><% item.$id.count %></span></a><%
+			<li><a href="<% request.path_info %>?category=<% id %>"><span><% item.$id.name %></span>&nbsp;<span class="badge" style="background-color: #FF7300"><% item.$id.count %></span></a><%
 					IF item.$id.content.size;
 						INCLUDE list item = item.$id.content;
 					END %>
@@ -46,7 +135,7 @@ IF breadcrumbs %>
 	</ul><%
 END;
 IF items.size %>
-<table class="catalog table table-condensed"><%
+<table id="catalog" class="table table-condensed"><%
 	SET category_name_last = '';
 	FOREACH id IN items;
 		IF (category_name_last != id.category_name) && (id.category_name != category_name) %>
@@ -55,7 +144,9 @@ IF items.size %>
 		END %>
 		<tr class="item">
 			<td><a href="/item/?id=<% id.id %>"><% id.name %></a></td>
-			<td class="text-nowrap buttons">
+			<td class="text-nowrap text-right buttons">
+				<% id.price %>&nbsp;₽
+				<br class="visible-xs-inline">
 				<div class="btn-group">
 					<button type="button" class="btn btn-xs <% t = id.id; IF session.cart.$t != "" %>btn-success<% ELSE %>btn-default<% END %> btn-cart" data-id="<% id.id %>">
 						<span class="visible-lg-inline"><% IF session.cart.$t != "" %>В корзине<% ELSE %>В корзину<% END %></span>
@@ -76,45 +167,11 @@ IF items.size %>
 						END %>					
 					</ul>
 				</div>
-				<br class="visible-xs-inline">
-				<% id.price %> <span class="glyphicon glyphicon-ruble"></span>
 			</td>
 		</tr><%
 	END %>
 </table><%
-	IF pages > 1;
-		pages_max = 8;
-		IF ! params.page; params.page = 1; END;
-		IF params.page < pages_max - 2;
-			pages_begin = 1;
-			pages_end = (pages_max - 2 < pages) ? pages_max - 2 : pages ;
-		ELSIF pages - params.page < pages_max - 2;
-			pages_begin = pages - pages_max + 2;
-			pages_end = pages;
-		ELSE;
-			pages_begin = params.page - (pages_max - 3) / 2;
-			pages_end = params.page + (pages_max - 3) / 2;
-		END;
-		
-		"\n"%><nav><ul class="pagination"><%
-		BLOCK link;
-			IF page == params.page;
-				"\n\t"%><li class="active"><a href="#"><% page %></a></li><%
-			ELSE;
-				"\n\t"%><li><a href="<% request.path_info %>?page=<% page %>;search=<% params.search %>;category=<% params.category %>"><% page %></a></li><%
-			END;
-		END;
-		IF pages_begin != 1;
-			"\n"; INCLUDE link page = 1; "\n";%><li class="disabled"><span>...</span></li><%
-		END;
-		FOREACH id IN [pages_begin .. pages_end];
-			"\n"; INCLUDE link page = id;
-		END;%><%
-		IF pages_end != pages;
-			"\n"%><li class="disabled"><span>...</span></li><%"\n"; INCLUDE link page = pages;
-		END;
-		"\n"%></ul></nav><%
-	END;
+INCLUDE pager.tt get_params = "&search=" _ params.search _ "&category=" _ params.category ;
 ELSE %>
 	<br><%
 	IF params.search %>

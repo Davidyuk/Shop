@@ -1,23 +1,33 @@
 ﻿package Shop;
 use Dancer ':syntax';
-use Shop::DB qw(db);
+use Shop::DB;
+use Shop::Common;
 use Shop::Manager;
 
 our $VERSION = '0.1';
 
-hook before => sub {
+hook before_layout_render => sub {
+	printf STDERR 'Hello hook before';
 	var menu => [
 		{ name => 'Каталог', href => '/' },
 		{ name => 'Корзина', href => '/cart/' },
 		{ name => 'Магазины', href => '/stores', dropdown => getStoresList() }
 	];
-	session messages => [] if (! defined session('messages'));
-	#my @array = qw(/login /logout);
-	session path_info => request->path_info if ! (request->path_info ~~ ['/login', '/logout', '/register', '/cabinet/', '/cartajax'] );
+	session cart => {} if ! defined session('cart');
+	
+	my @no_redirect_links = qw(/login /logout /register /cabinet/ /cart/ajax);
+	session path_info => request->path_info if ! (request->path_info ~~ @no_redirect_links );
+	
+	if (request->path_info =~ /^\/cabinet\// && ! defined session('user_id') ) {
+		addMessage('Страница доступна только после входа в систему.', 'danger');
+		return redirect '/login';
+	}
 };
 
 hook after_layout_render => sub {
+	printf STDERR 'Hello hook after_layout_render';
 	session messages => [];
+	
 };
 
 #require Data::Dumper;
@@ -34,10 +44,19 @@ sub getStoresList {
 }
 
 get '/stores' => sub {
+	my $store;
 	template 'stores', {
-		(defined param('id') && param('id') ne '') ?
-			( store => db()->resultset('Store')->find(param('id')) ) :
-			( stores => getStoresList() )
+		(param('id') && param('id') =~ m/^\d+$/ && ($store = db()->resultset('Store')->find(param('id')))) ?
+			(
+				store => $store,
+				title => $store->name,
+				header => $store->name
+			) :
+			(
+				title => 'Магазины',
+				header => 'Магазины',
+				stores => getStoresList()
+			)
 	};
 };
 

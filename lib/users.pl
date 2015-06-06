@@ -1,11 +1,16 @@
-﻿use Shop::DB qw(db);
+﻿use Shop::DB;
+use Shop::Common;
+use strict;
+#use warnings;
 use utf8;
 
 our $default_path = '/';
 
 sub getUserName {
 	my $user = shift;
-	return $user->name . ' ' . $user->sname;
+	my $name = $user->name . ' ' . $user->sname;
+	$name =~ s/^\s+|\s+$//g;
+	return $name;
 }
 
 post '/login' => sub {
@@ -16,19 +21,12 @@ post '/login' => sub {
 		session user_id => $user->id;
 		session user_name => getUserName($user);
 		session user_role => $user->role;
-		session messages => [@{session->{messages}}, {
-			text => 'Добро пожаловать, ' . session('user_name') . '.',
-			type => 'success'
-		}];
-		
+		addMessage('Добро пожаловать, ' . session('user_name') . '.', 'success');
 		redirect session('path_info') || $default_path;
 		return;
 	}
 	
-	session messages => [@{session->{messages}}, {
-		text => 'Неверное имя пользователя или пароль. Проверьте правильность введенных данных.',
-		type => 'danger'
-	}];
+	addMessage('Неверное имя пользователя или пароль. Проверьте правильность введенных данных.', 'danger');
 	template 'login', {
 		title => 'Вход',
 		header => 'Вход в систему'
@@ -45,10 +43,7 @@ get '/login' => sub {
 get '/logout' => sub {
 	my $path = session('path_info');
 	session->destroy;
-	session messages => [@{session->{messages}}, {
-		text => 'Вы успешно вышли из системы.',
-		type => 'info'
-	}];
+	addMessage('Вы успешно вышли из системы.', 'info');
 	redirect $path || $default_path;
 };
 
@@ -57,24 +52,15 @@ post '/register' => sub {
 	
 	print STDERR 'DEBUF'.param('email');
 	if (param('email') eq '') {
-		session messages => [@{session->{messages}}, {
-			text => 'Адрес электронной почты не указан.',
-			type => 'danger'
-		}];
+		addMessage('Адрес электронной почты не указан.', 'danger');
 		$valid = false;
 	}
 	if (param('password') eq '') {
-		session messages => [@{session->{messages}}, {
-			text => 'Пустые пароли запрещены.',
-			type => 'danger'
-		}];
+		addMessage('Пустые пароли запрещены.', 'danger');
 		$valid = false;
 	}
 	if (param('password') != param('password_rep')) {
-		session messages => [@{session->{messages}}, {
-			text => 'Пароли не совпадают.',
-			type => 'danger'
-		}];
+		addMessage('Пароли не совпадают.', 'danger');
 		$valid = false;
 	}
 	
@@ -96,15 +82,9 @@ post '/register' => sub {
 			session user_id => $user->id;
 			session user_name => getUserName($user);
 			session user_role => $user->role;
-			session messages => [@{session->{messages}}, {
-				text => 'Вы успешно зарегистрировались, ' . session('user_name') . '.',
-				type => 'success'
-			}];
-		} else {	
-			session messages => [@{session->{messages}}, {
-				text => 'Пользователь с email: <strong>' . param('email') . '</strong> уже зарегистрирован в системе.',
-				type => 'danger'
-			}];
+			addMessage('Вы успешно зарегистрировались, ' . session('user_name') . '.', 'success');
+		} else {
+			addMessage('Пользователь с email: <strong>' . param('email') . '</strong> уже зарегистрирован в системе.', 'danger');
 			$valid = false;
 		}
 	}
@@ -135,44 +115,28 @@ post '/cabinet/' => sub {
 		$user->payment(param('payment'));
 		$user->address(param('address'));
 		session user_name => getUserName($user);
-		session messages => [@{session->{messages}}, {
-			text => 'Изменения сохранены.',
-			type => 'info'
-		}];
+		addMessage('Изменения сохранены.', 'info');
 	} elsif (param('action') eq 'password') {
 		if ($user->passhash eq param('password_old')) {
 			$user->passhash(param('password'));
-			session messages => [@{session->{messages}}, {
-				text => 'Пароль изменён.',
-				type => 'info'
-			}];
+			addMessage('Пароль изменён.', 'info');
 		} else {
-			session messages => [@{session->{messages}}, {
-				text => 'Неправильно указан старый пароль.',
-				type => 'danger'
-			}];
+			addMessage('Неправильно указан старый пароль.', 'danger');
 		}
 	}
 	$user->update;
-	var user => $user;
 	template 'cabinet', {
 		title => 'Личный кабинет',
-		header => 'Личный кабинет'
+		header => 'Личный кабинет',
+		user => $user
 	};
 };
 
 get '/cabinet/' => sub {
-	if (! defined session('user_id')) {
-		session messages => [@{session->{messages}}, {
-			text => 'Для доступа в этот раздел требуется регистрация.',
-			type => 'danger'
-		}];
-		redirect '/login';
-		return;
-	}
-	var user => db()->resultset('User')->find(session('user_id'));
 	template 'cabinet', {
 		title => 'Личный кабинет',
-		header => 'Личный кабинет'
+		header => 'Личный кабинет',
+		user => db()->resultset('User')->find(session('user_id'))
 	};
 };
+

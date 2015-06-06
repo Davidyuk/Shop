@@ -36,14 +36,26 @@ __PACKAGE__->table("orders");
   is_foreign_key: 1
   is_nullable: 1
 
-=head2 status
+=head2 items
 
   data_type: 'text'
   is_nullable: 1
 
+=head2 status_id
+
+  data_type: 'integer'
+  default_value: 1
+  is_foreign_key: 1
+  is_nullable: 0
+
 =head2 comment
 
   data_type: 'text'
+  is_nullable: 1
+
+=head2 createtime
+
+  data_type: 'timestamp with time zone'
   is_nullable: 1
 
 =head2 address
@@ -54,6 +66,12 @@ __PACKAGE__->table("orders");
 =head2 payment
 
   data_type: 'text'
+  is_nullable: 1
+
+=head2 hidden
+
+  data_type: 'boolean'
+  default_value: false
   is_nullable: 1
 
 =cut
@@ -68,14 +86,25 @@ __PACKAGE__->add_columns(
   },
   "user_id",
   { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
-  "status",
+  "items",
   { data_type => "text", is_nullable => 1 },
+  "status_id",
+  {
+    data_type      => "integer",
+    default_value  => 1,
+    is_foreign_key => 1,
+    is_nullable    => 0,
+  },
   "comment",
   { data_type => "text", is_nullable => 1 },
+  "createtime",
+  { data_type => "timestamp with time zone", is_nullable => 1 },
   "address",
   { data_type => "text", is_nullable => 1 },
   "payment",
   { data_type => "text", is_nullable => 1 },
+  "hidden",
+  { data_type => "boolean", default_value => \"false", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -92,19 +121,19 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 RELATIONS
 
-=head2 orders_items
+=head2 status
 
-Type: has_many
+Type: belongs_to
 
-Related object: L<Shop::Schema::Result::OrdersItem>
+Related object: L<Shop::Schema::Result::Status>
 
 =cut
 
-__PACKAGE__->has_many(
-  "orders_items",
-  "Shop::Schema::Result::OrdersItem",
-  { "foreign.order_id" => "self.id" },
-  { cascade_copy => 0, cascade_delete => 0 },
+__PACKAGE__->belongs_to(
+  "status",
+  "Shop::Schema::Result::Status",
+  { id => "status_id" },
+  { is_deferrable => 0, on_delete => "NO ACTION", on_update => "NO ACTION" },
 );
 
 =head2 user
@@ -128,8 +157,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-06-01 10:12:38
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:B0Brx6SVm1EBa7ylxWoL9A
+# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-06-05 20:16:36
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:H9qD93c1/KdGeW+A35rITA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

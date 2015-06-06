@@ -1,8 +1,4 @@
 jQuery(document).ready(function($) {
-	//$(".catalog .item td:nth-child(1)").click(function() {
-	//	window.document.location = $(this).parent().data("url");
-	//});
-	
 	$('.category_menu .plate').bind('mousewheel DOMMouseScroll', function(e) {
 		switch (e.type) {
 			case 'mousewheel': scrollTo = (e.originalEvent.wheelDelta * -1); break;
@@ -26,7 +22,7 @@ jQuery(document).ready(function($) {
 	}
 	var cart = {};
 	$.ajaxSetup({cache: false});
-	$.getJSON('/cartajax', function(data){
+	$.getJSON('/cart/ajax', function(data){
 		for (var i = 0; i < data.length; i++)
 			cart[data[i]] = true;
 		cart_count = data.length;
@@ -34,7 +30,7 @@ jQuery(document).ready(function($) {
 	
 	$('.btn-cart').click(function() {
 		cart[$(this).data('id')] = !cart[$(this).data('id')];
-		$.get('/cartajax', {
+		$.get('/cart/ajax', {
 			item: $(this).data('id'),
 			action: cart[$(this).data('id')] ? 'add' : 'remove',
 		}).error(networkError);
@@ -43,7 +39,6 @@ jQuery(document).ready(function($) {
 		$(this).toggleClass('btn-success');
 		setCartCount(cart_count + (cart[$(this).data('id')] ? 1 : -1));
 	});
-	
 	
 	function updateFinalPrice() {
 		var prices = $('.cart .price');
@@ -55,48 +50,71 @@ jQuery(document).ready(function($) {
 		return prices.length;
 	}
 	
+	$('.cart form').submit(function() {
+		if ($('#final-price').text() == 0) {
+			alert('Невозможно сделать заказ: общая стоимость равна нулю.');
+			return false;
+		}
+	});
+	
+	$('.cart .btn-cart-clear').click(function() {
+		if (confirm('Вы уверены, что хотите очистить корзину?')) {
+			setCartCount(0);
+			$('.cart').replaceWith($('<p/>', {text: 'Корзина не содержит элементов.'}));
+			$.get('/cart/ajax', {
+				action: 'clear'
+			}).error(networkError);
+		}
+	});
+	
 	$('.cart .btn-cart-delete').click(function() {
 		if (confirm('Вы уверены, что хотите удалить этот элемент из корзины?')) {
-			$(this).parent().parent().parent().remove();
+			$('#item-' + $(this).data('item')).remove();
 			setCartCount(cart_count - 1);
 			if (!updateFinalPrice())
 				$('.cart').replaceWith($('<p/>', {text: 'Корзина не содержит элементов.'}));
-			$.get('/cartajax', {
-				item: $(this).parents('.buttons').data('id'),
+			$.get('/cart/ajax', {
+				item: $(this).data('item'),
 				action: 'remove'
 			}).error(networkError);
 		}
 	});
 	
 	$('.cart .btn-cart-add').click(function() {
-		var i = $($(this).parent().next('input')[0]).val() * 1 + 1;
-		$($(this).parent().next('input')[0]).val(i);
-		if (i) $($(this).parent().next().next('span').children('button')[0]).attr("disabled", false);
+		var item = $('#item-' + $(this).data('item'));
+		var input = item.find('input');
+		input.val(input.val() * 1 + 1);
+		item.find('.btn-cart-sub').attr("disabled", false);
 		updateFinalPrice();
-		$.get('/cartajax', {
-			item: $(this).parents('.buttons').data('id'),
-			count: i
+		$.get('/cart/ajax', {
+			item: $(this).data('item'),
+			count: input.val()
 		}).error(networkError);
 	});
 	
 	$('.cart .btn-cart-sub').click(function() {
-		var i = $($(this).parent().prev('input')[0]).val() * 1 - 1;
-		$($(this).parent().prev('input')[0]).val(i);
-		if (!i) $(this).attr("disabled", true);
+		var item = $('#item-' + $(this).data('item'));
+		var input = item.find('input');
+		input.val(input.val() * 1 - 1);
+		if (input.val() == 0) $(this).attr("disabled", true);
 		updateFinalPrice();
-		$.get('/cartajax', {
-			item: $(this).parents('.buttons').data('id'),
-			count: i
+		$.get('/cart/ajax', {
+			item: $(this).data('item'),
+			count: input.val()
 		}).error(networkError);
 	});
 	
-	$('.cart input').keyup(function() {
+	$('.cart table input').keyup(function() {
 		this.value = this.value.replace(/[^0-9\.]/g,'') * 1;
-		$(this).next().children('button').attr("disabled", !(this.value*1));
+		$('#item-' + $(this).data('item') + ' .btn-cart-sub').attr("disabled", !(this.value*1));
 		updateFinalPrice();
-		$.get('/cartajax', {
-			item: $(this).parents('.buttons').data('id'),
+		$.get('/cart/ajax', {
+			item: $(this).data('item'),
 			count: this.value
 		}).error(networkError);
+	});
+	
+	$('.form-order-delete').submit(function() {
+		return confirm('Вы уверены, что хотите удалить этот заказ?');
 	});
 });

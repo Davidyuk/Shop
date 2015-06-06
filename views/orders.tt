@@ -1,0 +1,66 @@
+﻿<% IF items.size
+%>
+<style>
+	table td {
+		/* width: 1%; white-space: nowrap; */
+	}
+	table td:nth-child(2) {
+		width: auto;
+	}
+	
+	table .link {
+		overflow: hidden;
+	}
+	table tr:hover a {
+		text-decoration: underline;
+	}
+	table .link a {
+		color: #333333;
+		display: block;
+		padding: 100px;
+		margin: -100px;
+	}
+	.form-order-delete {
+		display: inline-block;
+	}
+</style>
+<table class="table table-hover">
+	<thead>
+		<tr>
+			<td>Номер заказа</td>
+			<td>Статус заказа</td>
+			<td class="hidden-xs">Время создания</td>
+			<td></td>
+		</tr>
+	</thead>
+	<tbody><%
+	FOREACH id IN items %>
+		<tr class="item">
+			<td class="link"><a href="/cabinet/order?id=<% id.id %>"><% id.id %></a></td>
+			<td class="link"><a href="/cabinet/order?id=<% id.id %>"><% id.status_name; id.comment ? " (" _ id.comment _ ")" : ""%></a></td>
+			<td class="link hidden-xs"><a href="/cabinet/order?id=<% id.id %>"><% id.createtime %></a></td>
+			<td class="text-right" data-id="<% id.id %>">
+				<span class="price"><%
+				SET goods = id.items.split(";");
+				SET price = 0;
+				FOREACH good in goods;
+					price = price + good.split(":").2 * good.split(":").1;
+				END;
+				price;
+				%></span>&nbsp;₽
+				<form method="post" class="form-order-delete">
+					<button type="submit" class="btn btn-xs btn-danger"<% id.status_id == 2 ? " disabled" : "" %>>
+						<span class="visible-lg-inline visible-md-inline">Удалить</span>
+						<span class="glyphicon glyphicon-remove"></span>
+					</button>
+					<input type="hidden" name="delete" value="<% id.id %>">
+				</form>
+			</td>
+		</tr><%
+	END %>
+	</tbody>
+</table><%
+INCLUDE pager.tt;
+ELSE %>
+<p>Список заказов пуст.</p><%
+END %>

@@ -4,7 +4,6 @@
 	<li><a href="<% store.href %>"><% store.name %></a></li>
 	<% END %>
 </ul>
-<% END;
-IF store;
+<% ELSE;
 store.name;
 END %>

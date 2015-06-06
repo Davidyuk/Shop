@@ -9,11 +9,10 @@
 		<meta name="author" content="">
 		<!--<link rel="icon" href="favicon.ico">-->
 		
-		<title>Shop<% IF !title %>!<% ELSE %> - <% title; END %></title>
+		<title>Shop<% title ? " - " _ title : "!" %></title>
 		
 		<link href="/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/css/style.css" rel="stylesheet">
-		<!-- <% request.uri_base %> -->
 	</head>
 	<body>
 	<nav class="navbar navbar-default">
@@ -38,7 +37,7 @@
 							<% IF link.dropdown %>
 							<ul class="dropdown-menu">
 								<% FOREACH item in link.dropdown %>
-								<li><a href="<% item.href %>"><% item.name %></a></li>
+								<li<% IF request.request_uri == item.href %> class="active"<% END %>><a href="<% item.href %>"><% item.name %></a></li>
 								<% END %>
 							</ul>
 							<% END %>
@@ -47,18 +46,21 @@
 				</ul>
 				<% IF session.user_id %>
 				<ul class="nav navbar-nav navbar-right">
-					<li<% IF request.path_info == "/cabinet/" %> class="active"<% END %>>
+					<li<% IF request.path_info == "/cabinet/" || request.path_info == "/orders" %> class="active"<% END %>>
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-							<% IF session.user_name; session.user_name; ELSE; "Личный кабинет"; END %>
+							<% session.user_name ? session.user_name : "Личный кабинет" %>
 							<b class="caret"></b>
 						</a>
-						<ul class="dropdown-menu">
-							<li><a href="/orders/">Состояние заказов</a></li>
+						<ul class="dropdown-menu" id="user_menu">
+							<li<% IF request.path_info == "/cabinet/orders" %> class="active"<% END %>><a href="/cabinet/orders"><span class="glyphicon glyphicon-list pull-right"></span>Состояние заказов</a></li>
+							<li<% IF request.path_info == "/cabinet/" %> class="active"<% END %>><a href="/cabinet/"><span class="glyphicon glyphicon-cog pull-right"></span> Редактирование профиля</a></li>
 							<% IF session.user_role == "admin" || session.user_role == "manager" %>
-								<li><a href="/manager/">Администрирование</a></li>
+								<li class="divider"></li>
+								<li<% IF request.path_info == "/manager/" %> class="active"<% END %>><a href="/manager/"><span class="glyphicon glyphicon-stats pull-right"></span>Управление магазинами</a></li>
 							<% END %>
-							<li class="divider"></li>
-							<li><a href="/cabinet/">Редактирование профиля</a></li>
+							<% IF session.user_role == "admin" %>
+								<li<% IF request.path_info == "/admin/" %> class="active"<% END %>><a href="/manager/"><span class="glyphicon glyphicon-wrench pull-right"></span>Управление сайтом</a></li>
+							<% END %>
 						</ul>
 					</li>
 					<li class="divider-vertical"></li>
@@ -82,30 +84,20 @@
 			</div><!--/.nav-collapse -->
 		</div>
 	</nav>
-	
-	<!--<a href="/cabinet/">Личный кабинет</a>
-	<a href="/manager/">Управление</a>-->
-	
-<div class="container" style="color: #ddd; border: 1px solid green; display: none">
-	<span class="visible-xs">Extra small (&lt;768px)		</span>
-	<span class="visible-sm">Small devices (>=768px)	</span>
-	<span class="visible-md">Medium devices (>=992px)	</span>
-	<span class="visible-lg">Large devices (>=1200px)	</span>
-</div>
+
 <main class="container">
-<% IF header %><div class="page-header"><h3><% header %></h3></div><% END;
-IF session.messages;
+<% IF ! hide_header %><div class="page-header"><h3><% title %></h3></div><% END;
 FOREACH message in session.messages %>
 <div class="alert alert-<% message.type %> alert-dismissable">
 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 	<% message.text %>
 </div>
-<% END;
-END %>
+<% END %>
 <% content %>
 </main>
 
 		<footer class="container">
+			<hr>
 			<p>&copy; 2015 Shop!</p>
 		</footer>
 		<script src="/js/jquery.min.js"></script>

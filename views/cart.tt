@@ -1,32 +1,39 @@
-﻿<% final_price = 0;
-IF items.size %>
-<table class="catalog cart table table-condensed"><%
+﻿<style>
+
+</style>
+<% final_price = 0;
+IF items.size
+%><div class="cart">
+<table class="catalog table table-condensed"><%
 	FOREACH id IN items;
 	t = id.id;
 	final_price = final_price + id.price * session.cart.$t;
 	%>
-		<tr class="item">
+		<tr class="item" id="item-<% id.id %>">
 			<td><a href="/item/?id=<% id.id %>"><% id.name %></a></td>
-			<td class="text-nowrap buttons" data-id="<% id.id %>">
-				<div class="form-group">
+			<td class="text-nowrap text-right" data-id="<% id.id %>">
+				<span class="hidden-xs"><span class="price"><% id.price %></span>&nbsp;₽</span>
+				<div style="width: 120px; display: inline-block; vertical-align: middle">
 					<div class="input-group">
 						<span class="input-group-btn">
-							<button type="button" class="btn btn-sm btn-success btn-cart-add">
-								<!--<span class="visible-lg-inline">Больше</span>-->
-								<span class="glyphicon glyphicon-plus"></span>
-							</button>
+							<div class="btn-group">
+								<button type="button" class="btn btn-sm btn-success btn-cart-add" data-item="<% id.id %>">
+									<span class="glyphicon glyphicon-plus"></span>
+								</button>
+							</div>
 						</span>
-						<input type="text" class="form-control input-sm" value="<% session.cart.$t %>">
-						<!--<span class="input-group-addon">ед.</span>-->
+						<input type="text" class="form-control input-sm" data-item="<% id.id %>" value="<% session.cart.$t %>">
 						<span class="input-group-btn">
-							<button type="button" class="btn btn-sm btn-danger btn-cart-sub"<% IF session.cart.$t == 0 %> disabled<% END %>>
-								<!--<span class="visible-lg-inline">Меньше</span>-->
-								<span class="glyphicon glyphicon-minus"></span>
-							</button>
+							<div class="btn-group">
+								<button type="button" class="btn btn-sm btn-danger btn-cart-sub" data-item="<% id.id %>"<% IF session.cart.$t == 0 %> disabled<% END %>>
+									<span class="glyphicon glyphicon-minus"></span>
+								</button>
+							</div>
 						</span>
 					</div>
 				</div>
-				<span class="price"><% id.price %></span> <span class="glyphicon glyphicon-ruble"></span>
+				<div class="visible-xs" style="height: 5px;"></div>
+				<span class="visible-xs-inline"><% id.price %>&nbsp;₽</span>
 				<div class="btn-group">
 					<button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
 						<span class="visible-lg-inline">Магазины</span>
@@ -42,7 +49,7 @@ IF items.size %>
 					</ul>
 				</div>
 				<div class="btn-group">
-					<button type="button" class="btn btn-sm btn-default btn-cart-delete">
+					<button type="button" class="btn btn-sm btn-default btn-cart-delete" data-item="<% id.id %>">
 						<span class="visible-lg-inline">Удалить</span>
 						<span class="glyphicon glyphicon-remove"></span>
 					</button>
@@ -52,42 +59,43 @@ IF items.size %>
 	END %>
 	<tr>
 		<td>Итого:</td>
-		<td><span id="final-price"><% final_price %></span> <span class="glyphicon glyphicon-ruble"></span></td>
+		<td class="text-right"><span id="final-price"><% final_price %></span>&nbsp;₽</td>
 	</tr>
-</table><%
-	IF pages > 1;
-		pages_max = 8;
-		IF ! params.page; params.page = 1; END;
-		IF params.page < pages_max - 2;
-			pages_begin = 1;
-			pages_end = (pages_max - 2 < pages) ? pages_max - 2 : pages ;
-		ELSIF pages - params.page < pages_max - 2;
-			pages_begin = pages - pages_max + 2;
-			pages_end = pages;
-		ELSE;
-			pages_begin = params.page - (pages_max - 3) / 2;
-			pages_end = params.page + (pages_max - 3) / 2;
-		END;
-		
-		"\n"%><nav><ul class="pagination"><%
-		BLOCK link;
-			IF page == params.page;
-				"\n\t"%><li class="active"><a href="#"><% page %></a></li><%
-			ELSE;
-				"\n\t"%><li><a href="<% request.path_info %>?page=<% page %>;search=<% params.search %>;category=<% params.category %>"><% page %></a></li><%
-			END;
-		END;
-		IF pages_begin != 1;
-			"\n"; INCLUDE link page = 1; "\n";%><li class="disabled"><span>...</span></li><%
-		END;
-		FOREACH id IN [pages_begin .. pages_end];
-			"\n"; INCLUDE link page = id;
-		END;%><%
-		IF pages_end != pages;
-			"\n"%><li class="disabled"><span>...</span></li><%"\n"; INCLUDE link page = pages;
-		END;
-		"\n"%></ul></nav><%
-	END;
+</table>
+<div class="form-group">
+	<button type="button" class="btn btn-success" data-toggle="collapse" data-target="#order">Оформить заказ</button>
+	<div class="btn-group pull-right">
+		<button type="button" class="btn btn-default btn-cart-clear">Очистить корзину <span class="glyphicon glyphicon-trash"></span></button>
+		<a href="save" class="btn btn-default"<% IF ! session.user_id; " disabled"; END %>>Перейти к другой корзине <span class="glyphicon glyphicon-list-alt"></span></a>
+		<a href="save" class="btn btn-default"<% IF ! session.user_id; " disabled"; END %>>Сохранить корзину <span class="glyphicon glyphicon-floppy-disk"></span></a>
+	</div>
+</div>
+<div id="order" class="collapse<% IF request.request_method == "POST"; " in"; END %>">
+	<form class="form-horizontal" method="post">
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="payment">Способ оплаты</label>
+			<div class="col-sm-9">
+				<input class="form-control" value="<% params.payment ? params.payment : user.payment %>" id="payment" type="text" list="payment_list" name="payment" >
+				<datalist id="payment_list">
+					<option>Безналичный расчёт</option>
+					<option>Наличный расчёт</option>
+				</datalist>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="address">Адрес для доставки</label>
+			<div class="col-sm-9">
+				<input class="form-control" value="<% params.address ? params.address : user.address %>" id="address" type="text" name="address" >
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-success cart-order" type="submit">Заказать</button>
+			</div>
+		</div>
+	</form>
+</div>
+</div><%
 ELSE %>
 <p>Корзина не содержит элементов.</p><%
 END %>

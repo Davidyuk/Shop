@@ -1,4 +1,4 @@
-﻿use Shop::DB qw(db);
+﻿use Shop::DB;
 use utf8;
 
 sub getCategoriesBreadcrumbs {

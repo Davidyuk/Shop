@@ -57,8 +57,8 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("user_id", "store_id");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-06-01 10:12:38
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:RkHXQQ9uT+s/kEgmeoXZvw
+# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-06-05 20:16:36
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:SPqEEVss9ipPdH2TPQiIAg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
