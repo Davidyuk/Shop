@@ -1,26 +1,26 @@
-﻿<table class="table catalog"><%
+﻿<table class="table"><%
 	IF breadcrumbs %>
 		<ul class="breadcrumb"><%
 		FOREACH breadcrumb IN breadcrumbs %>
-				<li><a href="/?category=<% breadcrumb.id %>"><% breadcrumb.name %></a></li><%
+				<li><a href="/catalog?category=<% breadcrumb.id %>"><% breadcrumb.name %></a></li><%
 		END %>
 		</ul><%
 	END %>
-	<tr><td class="category">Артикул</td><td><% item.id %></td></tr>
-	<tr><td class="category">Наименование</td><td><% item.name %></td></tr>
-	<tr><td class="category">Стоимость</td><td>
-		<% item.price %><span class="glyphicon glyphicon-ruble" aria-hidden="true"></span>
-		<div class="btn-group pull-right"><!--hidden-lg-->
-			<button type="button" class="btn btn-xs <% t = item.id; IF session.cart.$t != "" %>btn-success<% ELSE %>btn-default<% END %> btn-cart" data-id="<% item.id %>">
-				<span><% IF session.cart.$t != "" %>В корзине<% ELSE %>В корзину<% END %></span>
+	<tr><td class="cell-gray">Артикул</td><td><% item.id %></td></tr>
+	<tr><td class="cell-gray">Наименование</td><td><% item.name %></td></tr>
+	<tr><td class="cell-gray">Стоимость</td><td>
+		<% item.price %>&nbsp;₽
+		<div class="btn-group pull-right">
+			<button type="button" class="btn btn-xs <% t = item.id; session.cart.$t ? "btn-success" : "btn-default" %> btn-cart" data-id="<% item.id %>">
+				<% session.cart.$t ? "В корзине" : "В корзину" %>
 				<span class="glyphicon glyphicon-shopping-cart"></span>
 			</button>
-			<ul class="dropdown-menu dropdown-menu-right" role="menu">
-				<li class="dropdown-header hidden-lg">Можно купить в магазинах:</li><%
+			<ul class="dropdown-menu dropdown-menu-right">
+				<li class="dropdown-header visible-xs">Можно купить в магазинах:</li><%
 				SET stores_id = item.stores_id.split('\|');
 				SET stores_name = item.stores_name.split('\|');
 				FOREACH i IN [0 .. stores_id.max] %>
-					<li><a href="/stores?id=<% stores_id.$i %>"><% stores_name.$i %></a></li><%
+					<li><a href="/stores/<% stores_id.$i %>"><% stores_name.$i %></a></li><%
 				END %>	
 			</ul>
 			<button type="button" class="btn btn-xs btn-default" data-toggle="dropdown">

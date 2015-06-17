@@ -1,3 +1,5 @@
+@import "catalog.css";
+
 /* main.tt dropdown user menu */
 
 #user_menu a {
@@ -10,6 +12,26 @@
 	right: 18px;
 	top: 6px;
 }
+
+.cell-link {
+	overflow: hidden;
+}
+
+.cell-link a {
+	display: block;
+	padding: 100px;
+	margin: -100px; /* http://stackoverflow.com/questions/3966027/make-link-in-table-cell-fill-the-entire-row-height */
+	color: #333333;
+}
+
+.cell-link a:hover {
+	color: #333333;
+}
+
+.cell-gray {
+	background-color: #F5F5F5;
+}
+
 
 table td {
 	vertical-align: top;

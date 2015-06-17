@@ -4,15 +4,18 @@ use Shop::DB;
 use Shop::Common;
 use Shop::Manager;
 
+binmode(STDERR,':utf8');
+
 our $VERSION = '0.1';
 
-hook before_layout_render => sub {
-	printf STDERR 'Hello hook before';
-	var menu => [
-		{ name => 'Каталог', href => '/' },
-		{ name => 'Корзина', href => '/cart/' },
-		{ name => 'Магазины', href => '/stores', dropdown => getStoresList() }
-	];
+our $menu = [];
+our $messages = [];
+
+hook before_template_render => sub {
+	say STDERR 'Hello hook before ' . request->path_info;
+	var menu => $menu;
+	var messages => $messages;
+	
 	session cart => {} if ! defined session('cart');
 	
 	my @no_redirect_links = qw(/login /logout /register /cabinet/ /cart/ajax);
@@ -25,41 +28,18 @@ hook before_layout_render => sub {
 };
 
 hook after_layout_render => sub {
-	printf STDERR 'Hello hook after_layout_render';
-	session messages => [];
-	
+	say STDERR 'Hello hook after_layout_render ' . request->path_info;
+	$messages = [];
 };
 
 #require Data::Dumper;
 #print STDERR Data::Dumper::Dumper( @list );
 
-my $storesList;
-sub getStoresList {
-	return $storesList if defined $storesList;
-	my $rs = db()->resultset('Store')->search(undef, { order_by => 'name' });
-	my @stores = ();
-	push @stores, { name => $_->name, href => '/stores?id='.$_->id } while ($_ = $rs->next);
-	$storesList = [@stores];
-	return $storesList;
-}
-
-get '/stores' => sub {
-	my $store;
-	template 'stores', {
-		(param('id') && param('id') =~ m/^\d+$/ && ($store = db()->resultset('Store')->find(param('id')))) ?
-			(
-				store => $store,
-				title => $store->name,
-				header => $store->name
-			) :
-			(
-				title => 'Магазины',
-				header => 'Магазины',
-				stores => getStoresList()
-			)
-	};
+get '/' => sub {
+	#template 'index';
+	redirect '/catalog';
 };
 
-load 'catalog.pl', 'users.pl', 'cart.pl';
+load 'catalog.pl', 'cart.pl', 'stores.pl', 'users.pl', 'orders.pl';
 
 true;

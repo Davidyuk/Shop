@@ -12,14 +12,14 @@
 		<title>Shop<% title ? " - " _ title : "!" %></title>
 		
 		<link href="/css/bootstrap.min.css" rel="stylesheet">
+		<link href="/css/jquery.kladr.min.css" rel="stylesheet">
 		<link href="/css/style.css" rel="stylesheet">
 	</head>
 	<body>
 	<nav class="navbar navbar-default">
 		<div class="container">
 			<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-				<span class="sr-only">Toggle navigation</span>
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -27,28 +27,37 @@
 			<a class="navbar-brand" href="/">Shop!</a>
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
-				<ul class="nav navbar-nav">
-					<% FOREACH link in vars.menu %>
-						<li<% IF link.href == request.path_info#.substr(0, link.href.length) %> class="active"<% END %>>
-							<a<% IF link.dropdown %> class="dropdown-toggle" data-toggle="dropdown"<% END %> href="<% link.href %>"><% link.name %>
-								<% IF link.href == "/cart/" %> <span class="badge badge-cart"><% IF session.cart && (session.cart.keys.max != -1); session.cart.keys.max + 1; END %></span><% END %>
-								<% IF link.dropdown %> <b class="caret"></b><% END %>
-							</a>
-							<% IF link.dropdown %>
-							<ul class="dropdown-menu">
-								<% FOREACH item in link.dropdown %>
-								<li<% IF request.request_uri == item.href %> class="active"<% END %>><a href="<% item.href %>"><% item.name %></a></li>
-								<% END %>
-							</ul>
-							<% END %>
-						</li>
-					<% END %>
+				<ul class="nav navbar-nav"><%
+				FOREACH link in vars.menu %>
+					<li<% IF request.path_info == link.href || request.path_info.match("^" _ link.href _ "/") %> class="active"<% END %>>
+						<a<% IF link.dropdown %> class="dropdown-toggle" data-toggle="dropdown"<% END %> href="<% link.href %>"><% link.name;
+							IF link.href == "/cart" %> <span id="badge-cart" class="badge"><% session.cart.keys.max + 1 IF session.cart.keys.max != -1 %></span><% END;
+							IF link.dropdown %> <b class="caret"></b><% END %>
+						</a>
+						<% IF link.dropdown %>
+						<ul class="dropdown-menu"><%
+						FOREACH i in link.dropdown;
+							SET l = link.href _ "/" _ i.href %>
+							<li<% IF request.path_info == l || request.path_info.match("^" _ l _ "/") %> class="active"<% END %>><a href="<% l %>"><% i.name %></a></li><%
+						END %>
+						</ul>
+						<% END %>
+					</li><%
+				END %>
 				</ul>
-				<% IF session.user_id %>
+				<ul class="nav navbar-right"><%
+				IF session.user_id %>
+					<a href="/logout" class="btn btn-default navbar-btn">Выход</a><%
+				ELSE %>
+					<a href="/login" class="btn btn-default navbar-btn hidden-lg hidden-xs">Вход</a>
+					<a href="/register" class="btn btn-success navbar-btn">Регистрация</a><%
+				END %>
+				</ul><%
+				IF session.user_id %>
 				<ul class="nav navbar-nav navbar-right">
-					<li<% IF request.path_info == "/cabinet/" || request.path_info == "/orders" %> class="active"<% END %>>
+					<li<% IF request.request_uri.match("^/cabinet/") %> class="active"<% END %>>
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-							<% session.user_name ? session.user_name : "Личный кабинет" %>
+							<% session.user_name %>
 							<b class="caret"></b>
 						</a>
 						<ul class="dropdown-menu" id="user_menu">
@@ -56,21 +65,17 @@
 							<li<% IF request.path_info == "/cabinet/" %> class="active"<% END %>><a href="/cabinet/"><span class="glyphicon glyphicon-cog pull-right"></span> Редактирование профиля</a></li>
 							<% IF session.user_role == "admin" || session.user_role == "manager" %>
 								<li class="divider"></li>
-								<li<% IF request.path_info == "/manager/" %> class="active"<% END %>><a href="/manager/"><span class="glyphicon glyphicon-stats pull-right"></span>Управление магазинами</a></li>
+								<li<% IF request.path_info == "/cabinet/manager/" %> class="active"<% END %>><a href="/cabinet/manager/"><span class="glyphicon glyphicon-stats pull-right"></span>Управление магазинами</a></li>
 							<% END %>
 							<% IF session.user_role == "admin" %>
-								<li<% IF request.path_info == "/admin/" %> class="active"<% END %>><a href="/manager/"><span class="glyphicon glyphicon-wrench pull-right"></span>Управление сайтом</a></li>
+								<li<% IF request.path_info == "/cabinet/admin/" %> class="active"<% END %>><a href="/cabinet/admin/"><span class="glyphicon glyphicon-wrench pull-right"></span>Управление сайтом</a></li>
 							<% END %>
 						</ul>
 					</li>
 					<li class="divider-vertical"></li>
-					<a href="/logout" class="btn btn-default navbar-btn">Выход</a>
-				</ul>
-				<% ELSE %>
-				<ul class="nav navbar-right">
-					<a href="/login" class="btn btn-default navbar-btn hidden-lg hidden-xs">Вход</a>
-					<a href="/register" class="btn btn-success navbar-btn">Регистрация</a>
-				</ul>
+				</ul><%
+				END %><%
+				UNLESS session.user_id %>
 				<form action="/login" method="post" class="navbar-form navbar-right visible-lg visible-xs">
 					<div class="form-group">
 						<input name="email" type="email" placeholder="Email" class="form-control">
@@ -86,10 +91,10 @@
 	</nav>
 
 <main class="container">
-<% IF ! hide_header %><div class="page-header"><h3><% title %></h3></div><% END;
-FOREACH message in session.messages %>
+<% IF ! hide_header && title %><div class="page-header"><h3><% title %></h3></div><% END;
+FOREACH message in vars.messages %>
 <div class="alert alert-<% message.type %> alert-dismissable">
-	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
 	<% message.text %>
 </div>
 <% END %>
@@ -101,6 +106,7 @@ FOREACH message in session.messages %>
 			<p>&copy; 2015 Shop!</p>
 		</footer>
 		<script src="/js/jquery.min.js"></script>
+		<script src="/js/jquery.kladr.min.js"></script>
 		<script src="/js/bootstrap.min.js"></script>
 		<script src="/js/script.js"></script>
 	</body>

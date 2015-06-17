@@ -1,192 +1,102 @@
-﻿<style>
-	#catalog .category {
-		background-color: #f5f5f5;
-	}
-	#catalog .item:hover {
-		background-color: #f5f5f5;
-	}
-	#catalog .item td:nth-child(1) {
-		padding: 0;
-		overflow: hidden;
-	}
-	#catalog .item td:nth-child(1) a {
-		color: #333333;
-		/* padding: 5px; 8px для не table-condensed */
-		display: block;
-		margin: -100px; /* http://stackoverflow.com/questions/3966027/make-link-in-table-cell-fill-the-entire-row-height */
-		padding: 105px;
-	}
-	#catalog .item td:nth-child(1) a:hover {
-		text-decoration: underline;
-		color: #333333;
-	}
-	#catalog .buttons { width: 1%; }
-	
-	#categories {
-		width: 220px;
-		position: relative;
-		margin-right: 15px;
-	}
-	#categories .list-group-item {
-		position: static;
-		padding: 0;
-	}
-	#categories .list-group-item:first-child:hover { background: #E7E7E7; }
-	#categories .list-group-item:first-child {
-		padding: 10px 15px;
-		text-transform: uppercase;
-		background: #E7E7E7;
-		color: #555555;
-	}
-	#categories .list-group-item > a {
-		padding: 10px 15px;
-		display: block;
-		color: #333333;
-	}
-	#categories .list-group-item:hover {
-		background: #f5f5f5;
-	}
-	#categories .list-group-item > a:hover {
-		color: #333333;
-	}
-	#categories .list-group-item:hover .plate_wrap {
-		display: block;
-	}
-	#categories .plate_wrap {
-		display: none;
-		position: absolute;
-		top: 45px;
-		bottom: 5px;
-		left: 220px;
-		min-width: 450px;
-		background: #fff;
-		border: 1px solid #ddd;
-		border-left: none;
-		border-radius: 0 4px 4px 0;
-		overflow: hidden;
-		z-index: 1;
-	}
-	#categories .plate {
-		overflow: auto;
-		position: absolute;
-		top: 5px;
-		left: 5px;
-		bottom: 5px;
-		right: 5px;
-	}
-	
-	#categories .plate ul {
-		margin-left: 20px;
-		padding-left: 0;
-	}
-	#categories .plate > ul { margin-left: 0; }
-	
-	#categories .plate > ul > li > a { font-weight: bold; }
-	#categories .plate li { list-style-type: none; }
-	#categories .plate li a, #categories .plate li a:hover { color: #333333; text-decoration: none; }
-	#categories .plate li a:hover span:nth-child(1) { text-decoration: underline; }
-</style>
-
-<table><tr>
-	<td class="visible-lg visible-md">
+﻿<div class="row">
+	<div class="col-sm-3 hidden-xs">
 		<div id="categories" class="list-group">
-			<%BLOCK list %>
-			<ul><%
-				FOREACH id IN item.keys.nsort %>
-			<li><a href="<% request.path_info %>?category=<% id %>"><span><% item.$id.name %></span>&nbsp;<span class="badge" style="background-color: #FF7300"><% item.$id.count %></span></a><%
-					IF item.$id.content.size;
-						INCLUDE list item = item.$id.content;
-					END %>
+		<%BLOCK list %>
+		<ul><%
+			FOREACH id IN item.keys.nsort %>
+			<li><a href="<% request.path_info %>?category=<% id %>"><span><% item.$id.name %></span>&nbsp;<span class="badge"><% item.$id.count %></span></a><%
+			IF item.$id.content.size;
+				INCLUDE list item = item.$id.content;
+			END %>
 			</li><%
-				END %>
-			</ul><%
-			END
-			%><li class="list-group-item">Категории товаров</li>
-			<% FOREACH id IN categories.keys.nsort %>
-				<li class="list-group-item"><a href="<% request.path_info %>?category=<% id %>"><% categories.$id.name %></a><%
-				IF categories.$id.content.size;%>
-					<div class="plate_wrap"><div class="plate"><%
-						INCLUDE list item = categories.$id.content;%>
-					</div></div><%
-				END;
-				%>
-				</li><%
-			END; %>
-		</div>
-	</td>
-	<td style="width: 100%;">
-
-<form method="GET">
-	<div class="form-group">
-		<input type="search" name="search" class="form-control" placeholder="Поиск..." value="<% params.search %>">
-		<input type="hidden" name="category" value="<% params.category %>">
-	</div>
-</form><%
-IF breadcrumbs %>
-	<ul class="breadcrumb"><%
-	FOREACH breadcrumb IN breadcrumbs;
-		IF breadcrumb.is_last %>
-			<li class="active"><% breadcrumb.name %></li><%
-			category_name = breadcrumb.name;
-		ELSE %>
-			<li><a href="<% request.path_info %>?category=<% breadcrumb.id %>"><% breadcrumb.name %></a></li><%
-		END;
-	END %>
-	</ul><%
-END;
-IF items.size %>
-<table id="catalog" class="table table-condensed"><%
-	SET category_name_last = '';
-	FOREACH id IN items;
-		IF (category_name_last != id.category_name) && (id.category_name != category_name) %>
-			<tr class="category"><td colspan="2" class="category"><a href="<% request.path_info %>?category=<% id.category_id %>"><% id.category_name %></a></td></tr><%
-			SET category_name_last = id.category_name;
-		END %>
-		<tr class="item">
-			<td><a href="/item/?id=<% id.id %>"><% id.name %></a></td>
-			<td class="text-nowrap text-right buttons">
-				<% id.price %>&nbsp;₽
-				<br class="visible-xs-inline">
-				<div class="btn-group">
-					<button type="button" class="btn btn-xs <% t = id.id; IF session.cart.$t != "" %>btn-success<% ELSE %>btn-default<% END %> btn-cart" data-id="<% id.id %>">
-						<span class="visible-lg-inline"><% IF session.cart.$t != "" %>В корзине<% ELSE %>В корзину<% END %></span>
-						<span class="glyphicon glyphicon-shopping-cart"></span>
-					</button>
-				</div>
-				<div class="btn-group">
-					<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
-						<span class="visible-lg-inline">Магазины</span>
-						<span class="glyphicon glyphicon-map-marker"></span>
-					</button>
-					<ul class="dropdown-menu dropdown-menu-right" role="menu">
-						<li class="dropdown-header hidden-lg">Можно купить в магазинах:</li><%
-						SET stores_id = id.stores_id.split('\|');
-						SET stores_name = id.stores_name.split('\|');
-						FOREACH i IN [0 .. stores_id.max] %>
-							<li><a href="/stores?id=<% stores_id.$i %>"><% stores_name.$i %></a></li><%
-						END %>					
-					</ul>
-				</div>
-			</td>
-		</tr><%
-	END %>
-</table><%
-INCLUDE pager.tt get_params = "&search=" _ params.search _ "&category=" _ params.category ;
-ELSE %>
-	<br><%
-	IF params.search %>
-		По запросу <b><% params.search %></b> ничего не найдено.
-		<p>Рекомендации:</p>
-		<ul>
-		<li>Убедитесь, что все слова написаны без ошибок.</li>
-		<li>Попробуйте использовать другие ключевые слова.</li>
-		<li>Попробуйте использовать более популярные ключевые слова.</li>
+			END %>
 		</ul><%
-	ELSE %>
-		<p>Категория <b><% category_name %></b> не содержит элементов.</p><%
-	END;
-END %>
-
-</td>
-</tr>
-</table>
+		END %>
+		<li class="list-group-item">Категории товаров</li><%
+		FOREACH id IN categories.keys.nsort %>
+			<li class="list-group-item"><a href="<% request.path_info %>?category=<% id %>"><% categories.$id.name %></a><%
+			IF categories.$id.content.size %>
+				<div class="plate_wrap"><div class="plate"><%
+					INCLUDE list item = categories.$id.content;%>
+				</div></div><%
+			END;
+			%>
+			</li><%
+		END; %>
+		</div>
+	</div>
+	
+	<div class="col-sm-9 col-xs-12">
+		<form method="GET">
+			<div class="form-group">
+				<input type="search" name="search" class="form-control" placeholder="Поиск..." value="<% params.search %>">
+				<input type="hidden" name="category" value="<% params.category %>">
+			</div>
+		</form><%
+		IF breadcrumbs %>
+		<ul class="breadcrumb"><%
+			FOREACH breadcrumb IN breadcrumbs;
+			IF breadcrumb.is_last %>
+				<li class="active"><% breadcrumb.name %></li><%
+				category_name = breadcrumb.name;
+			ELSE %>
+				<li><a href="<% request.path_info %>?category=<% breadcrumb.id %>"><% breadcrumb.name %></a></li><%
+			END;
+			END %>
+		</ul><%
+		END;
+		
+		IF items.size %>
+		<table class="table table-condensed table-hover"><%
+			SET category_name_last = '';
+			FOREACH id IN items;
+			IF (category_name_last != id.category_name) && (id.category_name != category_name) %>
+				<tr><td colspan="2" class="cell-gray"><a href="<% request.path_info %>?category=<% id.category_id %>"><% id.category_name %></a></td></tr><%
+				SET category_name_last = id.category_name;
+			END %>
+				<tr>
+					<td class="cell-link"><a href="<% request.path_info %>/<% id.id %>"><% id.name %></a></td>
+					<td class="text-nowrap text-right">
+						<% id.price %>&nbsp;₽
+						<br class="visible-xs-inline">
+						<div class="btn-group">
+							<button type="button" class="btn btn-xs <% t = id.id; session.cart.$t ? "btn-success" : "btn-default" %> btn-cart" data-id="<% id.id %>">
+								<span class="visible-lg-inline"><% session.cart.$t ? "В корзине" : "В корзину" %></span>
+								<span class="glyphicon glyphicon-shopping-cart"></span>
+							</button>
+						</div>
+						<div class="btn-group">
+							<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
+								<span class="visible-lg-inline">Магазины</span>
+								<span class="glyphicon glyphicon-map-marker"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-right">
+								<li class="dropdown-header hidden-lg">Можно купить в магазинах:</li><%
+								SET stores_id = id.stores_id.split('\|');
+								SET stores_name = id.stores_name.split('\|');
+								FOREACH i IN [0 .. stores_id.max] %>
+									<li><a href="/stores/<% stores_id.$i %>"><% stores_name.$i %></a></li><%
+								END %>					
+							</ul>
+						</div>
+					</td>
+				</tr><%
+			END %>
+		</table><%
+		INCLUDE pager.tt params_get = "&search=" _ params.search _ "&category=" _ params.category ;
+		ELSE %>
+		<br><%
+		IF params.search %>
+			По запросу <b><% params.search %></b> ничего не найдено.
+			<p>Рекомендации:</p>
+			<ul>
+			<li>Убедитесь, что все слова написаны без ошибок.</li>
+			<li>Попробуйте использовать другие ключевые слова.</li>
+			<li>Попробуйте использовать более популярные ключевые слова.</li>
+			</ul><%
+		ELSE %>
+			<p>Категория <b><% category_name %></b> не содержит элементов.</p><%
+		END;
+		END %>
+	</div>
+</div>

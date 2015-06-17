@@ -1,17 +1,4 @@
-﻿<script>
-function checkPassword(p1, p2) {
-	p1 = document.getElementById('password');
-	p2 = document.getElementById('password_rep');
-	if (p1.value != p2.value) {
-		p1.setCustomValidity('Пароли не совпадают');
-		p2.setCustomValidity('Пароли не совпадают');
-	} else {
-		p1.setCustomValidity('');
-		p2.setCustomValidity('');
-	}
-}
-</script>
-<form class="form-horizontal" method="post">
+﻿<form class="form-horizontal" method="post">
 	<div class="form-group">
 		<label class="col-sm-3 control-label" for="email">Электронная почта</label>
 		<div class="col-sm-9">
@@ -49,18 +36,18 @@ function checkPassword(p1, p2) {
 	<div class="form-group">
 		<label class="col-sm-3 control-label" for="password">Пароль</label>
 		<div class="col-sm-9">
-			<input class="form-control" id="password" type="password" name="password" onfocus="checkPassword();" oninput="checkPassword();" required>
+			<input class="form-control password" id="password" type="password" name="password" required>
 		</div>
 	</div>
 	<div class="form-group">
 		<label class="col-sm-3 control-label" for="password_rep">Подтверждение</label>
 		<div class="col-sm-9">
-			<input class="form-control" id="password_rep" type="password" name="password_rep" onfocus="checkPassword();" oninput="checkPassword();" required>
+			<input class="form-control password" id="password_rep" type="password" name="password_rep" required>
 		</div>
 	</div>
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-9">
-			<button  class="btn btn-default" type="submit">Зарегистрироваться</button>
+			<button class="btn btn-default" type="submit">Зарегистрироваться</button>
 		</div>
 	</div>
 </form>

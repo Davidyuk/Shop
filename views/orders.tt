@@ -1,25 +1,5 @@
-﻿<% IF items.size
-%>
+﻿<% IF orders.size %>
 <style>
-	table td {
-		/* width: 1%; white-space: nowrap; */
-	}
-	table td:nth-child(2) {
-		width: auto;
-	}
-	
-	table .link {
-		overflow: hidden;
-	}
-	table tr:hover a {
-		text-decoration: underline;
-	}
-	table .link a {
-		color: #333333;
-		display: block;
-		padding: 100px;
-		margin: -100px;
-	}
 	.form-order-delete {
 		display: inline-block;
 	}
@@ -34,26 +14,26 @@
 		</tr>
 	</thead>
 	<tbody><%
-	FOREACH id IN items %>
-		<tr class="item">
-			<td class="link"><a href="/cabinet/order?id=<% id.id %>"><% id.id %></a></td>
-			<td class="link"><a href="/cabinet/order?id=<% id.id %>"><% id.status_name; id.comment ? " (" _ id.comment _ ")" : ""%></a></td>
-			<td class="link hidden-xs"><a href="/cabinet/order?id=<% id.id %>"><% id.createtime %></a></td>
-			<td class="text-right" data-id="<% id.id %>">
-				<span class="price"><%
-				SET goods = id.items.split(";");
+	FOREACH order IN orders %>
+		<tr>
+			<td class="cell-link"><a href="<% request.path_info %>/<% order.id %>"><% order.id %></a></td>
+			<td class="cell-link"><a href="<% request.path_info %>/<% order.id %>"><% order.status_name; order.comment ? " (" _ order.comment _ ")" : ""%></a></td>
+			<td class="cell-link hidden-xs"><a href="<% request.path_info %>/<% order.id %>"><% order.createtime %></a></td>
+			<td class="text-right">
+				<%
+				SET goods = order.items.split(";");
 				SET price = 0;
 				FOREACH good in goods;
 					price = price + good.split(":").2 * good.split(":").1;
 				END;
 				price;
-				%></span>&nbsp;₽
+				%>&nbsp;₽
 				<form method="post" class="form-order-delete">
-					<button type="submit" class="btn btn-xs btn-danger"<% id.status_id == 2 ? " disabled" : "" %>>
+					<button type="submit" class="btn btn-xs btn-default"<% order.status_id == 2 ? " disabled" : "" %>>
 						<span class="visible-lg-inline visible-md-inline">Удалить</span>
 						<span class="glyphicon glyphicon-remove"></span>
 					</button>
-					<input type="hidden" name="delete" value="<% id.id %>">
+					<input type="hidden" name="delete" value="<% order.id %>">
 				</form>
 			</td>
 		</tr><%

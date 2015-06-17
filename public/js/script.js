@@ -11,14 +11,30 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
+	function checkPasswords() {
+		var password = this.value;
+		var valid = true;
+		var form = $(this).parents('form');
+		form.find('.password').each(function(id, dom){
+			valid &= dom.value == password;
+			dom.setCustomValidity(valid ? '' : 'Пароли не совпадают');
+		});
+	}
+	$('form .password').focus(checkPasswords);
+	$('form .password').change(checkPasswords);
+	
+	$('#address').kladr({
+		token: '5563e1530a69de66388b45f5',
+		oneString: true
+	});
+	
 	function networkError() {
 		alert('Ошибка при соединении с сервером, требуется обновить страницу.');
 	}	
 	var cart_count = 0;
 	function setCartCount(count) {
 		cart_count = count;
-		if (cart_count) $('.badge-cart').text(cart_count)
-		else $('.badge-cart').text('');
+		$('#badge-cart').text(cart_count ? cart_count : '');
 	}
 	var cart = {};
 	$.ajaxSetup({cache: false});
@@ -35,14 +51,13 @@ jQuery(document).ready(function($) {
 			action: cart[$(this).data('id')] ? 'add' : 'remove',
 		}).error(networkError);
 		$($(this).children()[0]).text(cart[$(this).data('id')] ? 'В корзине' : 'В корзину');
-		$(this).toggleClass('btn-default');
-		$(this).toggleClass('btn-success');
+		$(this).toggleClass('btn-default').toggleClass('btn-success');
 		setCartCount(cart_count + (cart[$(this).data('id')] ? 1 : -1));
 	});
 	
 	function updateFinalPrice() {
-		var prices = $('.cart .price');
-		var inputs = $('.cart input');
+		var prices = $('#cart .price');
+		var inputs = $('#cart input');
 		var sum = 0;
 		for (var i = 0; i < prices.length; i++)
 			sum += $(prices[i]).text() * $(inputs[i]).val();
@@ -50,29 +65,29 @@ jQuery(document).ready(function($) {
 		return prices.length;
 	}
 	
-	$('.cart form').submit(function() {
+	$('#cart form').submit(function() {
 		if ($('#final-price').text() == 0) {
 			alert('Невозможно сделать заказ: общая стоимость равна нулю.');
 			return false;
 		}
 	});
 	
-	$('.cart .btn-cart-clear').click(function() {
+	$('#cart .btn-cart-clear').click(function() {
 		if (confirm('Вы уверены, что хотите очистить корзину?')) {
 			setCartCount(0);
-			$('.cart').replaceWith($('<p/>', {text: 'Корзина не содержит элементов.'}));
+			$('#cart').replaceWith($('<p/>', {text: 'Корзина не содержит элементов.'}));
 			$.get('/cart/ajax', {
 				action: 'clear'
 			}).error(networkError);
 		}
 	});
 	
-	$('.cart .btn-cart-delete').click(function() {
+	$('#cart .btn-cart-delete').click(function() {
 		if (confirm('Вы уверены, что хотите удалить этот элемент из корзины?')) {
 			$('#item-' + $(this).data('item')).remove();
 			setCartCount(cart_count - 1);
 			if (!updateFinalPrice())
-				$('.cart').replaceWith($('<p/>', {text: 'Корзина не содержит элементов.'}));
+				$('#cart').replaceWith($('<p/>', {text: 'Корзина не содержит элементов.'}));
 			$.get('/cart/ajax', {
 				item: $(this).data('item'),
 				action: 'remove'
@@ -80,7 +95,7 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
-	$('.cart .btn-cart-add').click(function() {
+	$('#cart .btn-cart-add').click(function() {
 		var item = $('#item-' + $(this).data('item'));
 		var input = item.find('input');
 		input.val(input.val() * 1 + 1);
@@ -92,7 +107,7 @@ jQuery(document).ready(function($) {
 		}).error(networkError);
 	});
 	
-	$('.cart .btn-cart-sub').click(function() {
+	$('#cart .btn-cart-sub').click(function() {
 		var item = $('#item-' + $(this).data('item'));
 		var input = item.find('input');
 		input.val(input.val() * 1 - 1);
@@ -104,7 +119,7 @@ jQuery(document).ready(function($) {
 		}).error(networkError);
 	});
 	
-	$('.cart table input').keyup(function() {
+	$('#cart table input').keyup(function() {
 		this.value = this.value.replace(/[^0-9\.]/g,'') * 1;
 		$('#item-' + $(this).data('item') + ' .btn-cart-sub').attr("disabled", !(this.value*1));
 		updateFinalPrice();

@@ -1,0 +1,60 @@
+﻿#categories {
+	position: relative;
+}
+#categories .list-group-item {
+	position: static;
+	padding: 0;
+}
+#categories .list-group-item:first-child:hover { background: #E7E7E7; }
+#categories .list-group-item:first-child {
+	padding: 10px 15px;
+	text-transform: uppercase;
+	background: #E7E7E7;
+	color: #555555;
+}
+#categories .list-group-item > a {
+	padding: 10px 15px;
+	display: block;
+	color: #333333;
+}
+#categories .list-group-item:hover {
+	background: #f5f5f5;
+}
+#categories .list-group-item > a:hover {
+	color: #333333;
+}
+#categories .list-group-item:hover .plate_wrap {
+	display: block;
+}
+#categories .plate_wrap {
+	display: none;
+	position: absolute;
+	top: 45px;
+	bottom: 5px;
+	left: 100%;
+	min-width: 450px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-left: none;
+	border-radius: 0 4px 4px 0;
+	overflow: hidden;
+	z-index: 1;
+}
+#categories .plate {
+	overflow: auto;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	bottom: 5px;
+	right: 5px;
+}
+#categories .plate ul {
+	margin-left: 20px;
+	padding-left: 0;
+}
+#categories .plate > ul { margin-left: 0; }
+#categories .plate > ul > li > a { font-weight: bold; }
+#categories .plate li { list-style-type: none; }
+#categories .plate li a, #categories .plate li a:hover { color: #333333; text-decoration: none; }
+#categories .plate li a:hover span:nth-child(1) { text-decoration: underline; }
+#categories .badge { background-color: #FF7300; }

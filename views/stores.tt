@@ -1,9 +1,9 @@
 ﻿<% IF stores %>
-<ul>
-	<% FOREACH store in stores %>
-	<li><a href="<% store.href %>"><% store.name %></a></li>
-	<% END %>
-</ul>
-<% ELSE;
+<ul><%
+FOREACH store in stores %>
+	<li><a href="<% request.path_info %>/<% store.href %>"><% store.name %></a></li><%
+END %>
+</ul><%
+ELSE;
 store.name;
 END %>

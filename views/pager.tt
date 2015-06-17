@@ -1,34 +1,36 @@
 <%
 IF pages > 1;
 	DEFAULT pages_max = 8;
-	IF ! params.page; params.page = 1; END;
-	IF params.page < pages_max - 2;
+	DEFAULT params.page = 1;
+	IF params.page < pages_max;
 		pages_begin = 1;
-		pages_end = (pages_max - 2 < pages) ? pages_max - 2 : pages ;
-	ELSIF pages - params.page < pages_max - 2;
-		pages_begin = pages - pages_max + 2;
+		pages_end = (pages_max < pages) ? pages_max : pages ;
+	ELSIF (pages - params.page) < pages_max;
+		pages_begin = (pages - pages_max > 1) ? pages - pages_max : 1 ;
 		pages_end = pages;
 	ELSE;
-		pages_begin = params.page - (pages_max - 3) / 2;
-		pages_end = params.page + (pages_max - 3) / 2;
+		pages_begin = params.page - pages_max / 2;
+		pages_end   = params.page + pages_max / 2;
 	END;
 	
 	"\n"%><nav><ul class="pagination"><%
 	BLOCK link;
 		IF page == params.page;
-			"\n\t"%><li class="active"><a href="#"><% page %></a></li><%
+			"\n\t"%><li class="active"><a><% page %></a></li><%
 		ELSE;
-			"\n\t"%><li><a href="<% request.path_info %>?page=<% page %><% get_params ? get_params : "" %>"><% page %></a></li><%
+			"\n\t"%><li><a href="<% request.path_info %>?page=<% page %><% params_get %>"><% page %></a></li><%
 		END;
 	END;
 	IF pages_begin != 1;
-		"\n"; INCLUDE link page = 1; "\n";%><li class="disabled"><span class="glyphicon glyphicon-option-horizontal"></span></li><%
+		"\n"; INCLUDE link page = 1;
+		"\n";%><li class="disabled"><span class="glyphicon glyphicon-option-horizontal"></span></li><%
 	END;
 	FOREACH id IN [pages_begin .. pages_end];
 		"\n"; INCLUDE link page = id;
 	END;%><%
 	IF pages_end != pages;
-		"\n"%><li class="disabled"><span class="glyphicon glyphicon-option-horizontal"></span></li><%"\n"; INCLUDE link page = pages;
+		"\n"%><li class="disabled"><span class="glyphicon glyphicon-option-horizontal"></span></li><%
+		"\n"; INCLUDE link page = pages;
 	END;
 	"\n"%></ul></nav><%
 END

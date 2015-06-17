@@ -1,58 +1,40 @@
-﻿<style>
-	.items td:nth-child(1) {
-		overflow: hidden;
-	}
-
-	.items td:nth-child(1) a {
-		display: block;
-		padding: 100px;
-		margin: -100px;
-		color: #333333;
-	}
-	
-	.items td:nth-child(1) a:hover {
-		color: #333333;
-	}
-</style>
-<table class="items table table-condensed table-hover">
+﻿<table class="table table-condensed table-hover">
 	<thead><tr><td>Наименование</td><td></td></tr></thead><%
-	FOREACH id IN items;
-	t = id.id;
-	%>
+	FOREACH item IN items %>
 		<tr>
-			<td><a href="/item/?id=<% id.id %>"><% id.name %></a></td>
-			<td class="text-right" data-id="<% id.id %>">
-				<span class="price"><% id.count %>&nbsp;шт.&nbsp;x <% id.price %></span>&nbsp;₽
+			<td class="cell-link"><a href="/catalog/<% item.id %>"><% item.name %></a></td>
+			<td class="text-right">
+				<% item.count %>&nbsp;шт.&nbsp;x <% item.price %>&nbsp;₽
 				<br class="visible-xs visible-sm">
 				<div class="btn-group">
 					<button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown">
 						<span class="hidden-xs">Магазины</span>
 						<span class="glyphicon glyphicon-map-marker"></span>
 					</button>
-					<ul class="dropdown-menu dropdown-menu-right" role="menu">
-						<li class="dropdown-header hidden-lg">Можно забрать в магазинах:</li><%
-						SET stores_id = id.stores_id.split('\|');
-						SET stores_name = id.stores_name.split('\|');
-						FOREACH i IN [0 .. stores_id.max] %>
-							<li><a href="/stores?id=<% stores_id.$i %>"><% stores_name.$i %></a></li><%
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li class="dropdown-header visible-xs">Можно забрать в магазинах:</li><%
+						SET stores_item = item.stores_item.split('\|');
+						SET stores_name = item.stores_name.split('\|');
+						FOREACH i IN [0 .. stores_item.max] %>
+							<li><a href="/stores/<% stores_item.$i %>"><% stores_name.$i %></a></li><%
 						END %>
 					</ul>
 				</div>
 			</td>
 		</tr><%
 	END %>
-</table><% INCLUDE pager.tt get_params = "&id=" _ params.id %>
-<table class="table table-bordered" style="width: auto;">
+</table><%
+INCLUDE pager.tt %>
+<table class="table table-bordered" style="width: auto">
 	<tr><td>Способ оплаты</td><td><% order.payment %></td></tr>
 	<tr><td>Адрес для доставки</td><td><% order.address %></td></tr>
 	<tr><td>Время создания</td><td><% order.createtime %></td></tr>
 	<tr><td>Статус заказа</td><td><% order.status_name %><% IF order.comment %> (<% order.comment %>)<% END %></td></tr>
-	<tr><td>В сумме</td><td><b><% price %> ₽</b></td></tr>
+	<tr><td>В сумме</td><td><b><% price %>&nbsp;₽</b></td></tr>
 </table>
 <form action="/cabinet/orders" method="post" class="form-order-delete">
 	<button type="submit" class="btn btn-danger"<% order.status_id == 2 ? " disabled" : "" %>>
-		Удалить
-		<span class="glyphicon glyphicon-remove"></span>
+		Удалить <span class="glyphicon glyphicon-remove"></span>
 	</button>
 	<input type="hidden" name="delete" value="<% order.id %>">
 </form>
