@@ -11,8 +11,10 @@
 		
 		<title>Shop<% title ? " - " _ title : "!" %></title>
 		
-		<link href="/css/bootstrap.min.css" rel="stylesheet">
-		<link href="/css/jquery.kladr.min.css" rel="stylesheet">
+		<link href="/css/bootstrap.min.css" rel="stylesheet"><%
+		FOREACH style in styles %>
+		<link href="/css/<% style %>" rel="stylesheet"><%
+		END %>
 		<link href="/css/style.css" rel="stylesheet">
 	</head>
 	<body>
@@ -55,20 +57,20 @@
 				</ul><%
 				IF session.user_id %>
 				<ul class="nav navbar-nav navbar-right">
-					<li<% IF request.request_uri.match("^/cabinet/") %> class="active"<% END %>>
+					<li<% IF request.request_uri.match("^/cabinet") %> class="active"<% END %>>
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 							<% session.user_name %>
 							<b class="caret"></b>
 						</a>
 						<ul class="dropdown-menu" id="user_menu">
 							<li<% IF request.path_info == "/cabinet/orders" %> class="active"<% END %>><a href="/cabinet/orders"><span class="glyphicon glyphicon-list pull-right"></span>Состояние заказов</a></li>
-							<li<% IF request.path_info == "/cabinet/" %> class="active"<% END %>><a href="/cabinet/"><span class="glyphicon glyphicon-cog pull-right"></span> Редактирование профиля</a></li>
+							<li<% IF request.path_info == "/cabinet" %> class="active"<% END %>><a href="/cabinet"><span class="glyphicon glyphicon-cog pull-right"></span> Редактирование профиля</a></li>
 							<% IF session.user_role == "admin" || session.user_role == "manager" %>
 								<li class="divider"></li>
-								<li<% IF request.path_info == "/cabinet/manager/" %> class="active"<% END %>><a href="/cabinet/manager/"><span class="glyphicon glyphicon-stats pull-right"></span>Управление магазинами</a></li>
+								<li<% IF request.path_info == "/cabinet/manager" %> class="active"<% END %>><a href="/cabinet/manager"><span class="glyphicon glyphicon-stats pull-right"></span>Управление магазинами</a></li>
 							<% END %>
 							<% IF session.user_role == "admin" %>
-								<li<% IF request.path_info == "/cabinet/admin/" %> class="active"<% END %>><a href="/cabinet/admin/"><span class="glyphicon glyphicon-wrench pull-right"></span>Управление сайтом</a></li>
+								<li<% IF request.path_info == "/cabinet/admin" %> class="active"<% END %>><a href="/cabinet/admin"><span class="glyphicon glyphicon-wrench pull-right"></span>Управление сайтом</a></li>
 							<% END %>
 						</ul>
 					</li>
@@ -105,9 +107,11 @@ FOREACH message in vars.messages %>
 			<hr>
 			<p>&copy; 2015 Shop!</p>
 		</footer>
-		<script src="/js/jquery.min.js"></script>
-		<script src="/js/jquery.kladr.min.js"></script>
-		<script src="/js/bootstrap.min.js"></script>
-		<script src="/js/script.js"></script>
+		<script type="text/javascript" src="/js/jquery.min.js"></script>
+		<script type="text/javascript" src="/js/bootstrap.min.js"></script><%
+		FOREACH script in scripts %>
+		<script type="text/javascript" src="/js/<% script %>"></script><%
+		END %>
+		<script type="text/javascript" src="/js/script.js"></script>
 	</body>
 </html>

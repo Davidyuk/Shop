@@ -132,9 +132,34 @@ __PACKAGE__->has_many(
   { cascade_copy => 0, cascade_delete => 0 },
 );
 
+=head2 users_stores
 
-# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-06-05 20:16:36
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:exrrFIHIZ47JzzKERzt6Cw
+Type: has_many
+
+Related object: L<Shop::Schema::Result::UsersStore>
+
+=cut
+
+__PACKAGE__->has_many(
+  "users_stores",
+  "Shop::Schema::Result::UsersStore",
+  { "foreign.user_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
+=head2 stores
+
+Type: many_to_many
+
+Composing rels: L</users_stores> -> store
+
+=cut
+
+__PACKAGE__->many_to_many("stores", "users_stores", "store");
+
+
+# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-06-26 00:35:46
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:eJkHduxgo/2vvEy0OEEPHw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

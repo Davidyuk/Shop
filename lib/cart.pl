@@ -26,6 +26,8 @@ get '/cart' => sub {
 	}, undef);
 	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
 	template 'cart', {
+		styles => [ 'jquery.kladr.min.css' ],
+		scripts => [ 'jquery.kladr.min.js', 'cart.js' ],
 		title => 'Корзина',
 		items => [$rs->all()],
 		session('user_id') ? ( user => db()->resultset('User')->find(session('user_id')) ) : ()
@@ -46,6 +48,8 @@ post '/cart' => sub {
 	}, undef);
 	$rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
 	return template 'cart', {
+		styles => [ 'jquery.kladr.min.css' ],
+		scripts => [ 'jquery.kladr.min.js', 'cart.js' ],
 		title => 'Корзина',
 		items => [$rs->all()],
 		$user ? ( user => $user ) : ()

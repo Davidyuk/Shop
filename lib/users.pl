@@ -31,7 +31,11 @@ get '/logout' => sub {
 };
 
 get '/register' => sub {
-	template 'register', { title => 'Регистрация' };
+	template 'register', {
+		styles => [ 'jquery.kladr.min.css' ],
+		scripts => [ 'jquery.kladr.min.js' ],
+		title => 'Регистрация'
+	};
 };
 
 post '/register' => sub {
@@ -58,17 +62,23 @@ post '/register' => sub {
 		addMessage('Вы успешно зарегистрировались, ' . session('user_name') . '.', 'success');
 		return redirect session('path_info') || $default_path;
 	}
-	template 'register', { title => 'Регистрация' };
+	template 'register', {
+		styles => [ 'jquery.kladr.min.css' ],
+		scripts => [ 'jquery.kladr.min.js' ],
+		title => 'Регистрация'
+	};
 };
 
-get '/cabinet/' => sub {
+get '/cabinet' => sub {
 	template 'cabinet', {
+		styles => [ 'jquery.kladr.min.css' ],
+		scripts => [ 'jquery.kladr.min.js' ],
 		title => 'Личный кабинет',
 		user => db()->resultset('User')->find(session('user_id'))
 	};
 };
 
-post '/cabinet/' => sub {
+post '/cabinet' => sub {
 	my $user = db()->resultset('User')->find(session('user_id'));
 	if (isParamNEmp('action')) {
 		if (param('action') eq 'user_info') {
@@ -90,6 +100,8 @@ post '/cabinet/' => sub {
 		$user->update;
 	}
 	template 'cabinet', {
+		styles => [ 'jquery.kladr.min.css' ],
+		scripts => [ 'jquery.kladr.min.js' ],
 		title => 'Личный кабинет',
 		user => $user
 	};

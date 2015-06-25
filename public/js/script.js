@@ -1,3 +1,7 @@
+function networkError() {
+	alert('Произошла ошибка, требуется обновить страницу.');
+}	
+
 jQuery(document).ready(function($) {
 	$('.category_menu .plate').bind('mousewheel DOMMouseScroll', function(e) {
 		switch (e.type) {
@@ -23,14 +27,13 @@ jQuery(document).ready(function($) {
 	$('form .password').focus(checkPasswords);
 	$('form .password').change(checkPasswords);
 	
-	$('#address').kladr({
-		token: '5563e1530a69de66388b45f5',
-		oneString: true
-	});
+	if ($.kladr) {
+		$('#address').kladr({
+			token: '5563e1530a69de66388b45f5',
+			oneString: true
+		});
+	}
 	
-	function networkError() {
-		alert('Ошибка при соединении с сервером, требуется обновить страницу.');
-	}	
 	var cart_count = 0;
 	function setCartCount(count) {
 		cart_count = count;
@@ -53,80 +56,6 @@ jQuery(document).ready(function($) {
 		$($(this).children()[0]).text(cart[$(this).data('id')] ? 'В корзине' : 'В корзину');
 		$(this).toggleClass('btn-default').toggleClass('btn-success');
 		setCartCount(cart_count + (cart[$(this).data('id')] ? 1 : -1));
-	});
-	
-	function updateFinalPrice() {
-		var prices = $('#cart .price');
-		var inputs = $('#cart input');
-		var sum = 0;
-		for (var i = 0; i < prices.length; i++)
-			sum += $(prices[i]).text() * $(inputs[i]).val();
-		$('#final-price').text(sum);
-		return prices.length;
-	}
-	
-	$('#cart form').submit(function() {
-		if ($('#final-price').text() == 0) {
-			alert('Невозможно сделать заказ: общая стоимость равна нулю.');
-			return false;
-		}
-	});
-	
-	$('#cart .btn-cart-clear').click(function() {
-		if (confirm('Вы уверены, что хотите очистить корзину?')) {
-			setCartCount(0);
-			$('#cart').replaceWith($('<p/>', {text: 'Корзина не содержит элементов.'}));
-			$.get('/cart/ajax', {
-				action: 'clear'
-			}).error(networkError);
-		}
-	});
-	
-	$('#cart .btn-cart-delete').click(function() {
-		if (confirm('Вы уверены, что хотите удалить этот элемент из корзины?')) {
-			$('#item-' + $(this).data('item')).remove();
-			setCartCount(cart_count - 1);
-			if (!updateFinalPrice())
-				$('#cart').replaceWith($('<p/>', {text: 'Корзина не содержит элементов.'}));
-			$.get('/cart/ajax', {
-				item: $(this).data('item'),
-				action: 'remove'
-			}).error(networkError);
-		}
-	});
-	
-	$('#cart .btn-cart-add').click(function() {
-		var item = $('#item-' + $(this).data('item'));
-		var input = item.find('input');
-		input.val(input.val() * 1 + 1);
-		item.find('.btn-cart-sub').attr("disabled", false);
-		updateFinalPrice();
-		$.get('/cart/ajax', {
-			item: $(this).data('item'),
-			count: input.val()
-		}).error(networkError);
-	});
-	
-	$('#cart .btn-cart-sub').click(function() {
-		var item = $('#item-' + $(this).data('item'));
-		var input = item.find('input');
-		input.val(input.val() * 1 - 1);
-		if (input.val() == 0) $(this).attr("disabled", true);
-		updateFinalPrice();
-		$.get('/cart/ajax', {
-			item: $(this).data('item'),
-			count: input.val()
-		}).error(networkError);
-	});
-	
-	$('#cart table input').keyup(function() {
-		this.value = this.value.replace(/[^0-9\.]/g,'') * 1;
-		$('#item-' + $(this).data('item') + ' .btn-cart-sub').attr("disabled", !(this.value*1));
-		updateFinalPrice();
-		$.get('/cart/ajax', {
-			item: $(this).data('item'),
-			count: this.value
-		}).error(networkError);
 	});
 	
 	$('.form-order-delete').submit(function() {

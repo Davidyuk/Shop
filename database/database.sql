@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.4.1
 -- Dumped by pg_dump version 9.4.1
--- Started on 2015-06-05 20:16:00
+-- Started on 2015-06-26 00:26:18
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -15,7 +15,7 @@ SET client_min_messages = warning;
 
 DROP DATABASE shop;
 --
--- TOC entry 2094 (class 1262 OID 50621)
+-- TOC entry 2096 (class 1262 OID 52699)
 -- Name: shop; Type: DATABASE; Schema: -; Owner: postgres
 --
 
@@ -44,7 +44,7 @@ CREATE SCHEMA public;
 ALTER SCHEMA public OWNER TO postgres;
 
 --
--- TOC entry 2095 (class 0 OID 0)
+-- TOC entry 2097 (class 0 OID 0)
 -- Dependencies: 6
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
 --
@@ -61,7 +61,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- TOC entry 2097 (class 0 OID 0)
+-- TOC entry 2099 (class 0 OID 0)
 -- Dependencies: 188
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
@@ -72,7 +72,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 540 (class 1247 OID 50623)
+-- TOC entry 540 (class 1247 OID 52701)
 -- Name: role; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -90,7 +90,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 172 (class 1259 OID 50629)
+-- TOC entry 172 (class 1259 OID 52707)
 -- Name: categories; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -104,7 +104,7 @@ CREATE TABLE categories (
 ALTER TABLE categories OWNER TO postgres;
 
 --
--- TOC entry 173 (class 1259 OID 50635)
+-- TOC entry 173 (class 1259 OID 52713)
 -- Name: categories_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -119,7 +119,7 @@ CREATE SEQUENCE categories_id_seq
 ALTER TABLE categories_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2098 (class 0 OID 0)
+-- TOC entry 2100 (class 0 OID 0)
 -- Dependencies: 173
 -- Name: categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -128,7 +128,7 @@ ALTER SEQUENCE categories_id_seq OWNED BY categories.id;
 
 
 --
--- TOC entry 174 (class 1259 OID 50637)
+-- TOC entry 174 (class 1259 OID 52715)
 -- Name: categories_joined; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -145,7 +145,7 @@ ALTER TABLE ONLY categories_joined REPLICA IDENTITY NOTHING;
 ALTER TABLE categories_joined OWNER TO postgres;
 
 --
--- TOC entry 175 (class 1259 OID 50643)
+-- TOC entry 175 (class 1259 OID 52721)
 -- Name: items; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -160,7 +160,7 @@ CREATE TABLE items (
 ALTER TABLE items OWNER TO postgres;
 
 --
--- TOC entry 176 (class 1259 OID 50649)
+-- TOC entry 176 (class 1259 OID 52727)
 -- Name: items_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -175,7 +175,7 @@ CREATE SEQUENCE items_id_seq
 ALTER TABLE items_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2099 (class 0 OID 0)
+-- TOC entry 2101 (class 0 OID 0)
 -- Dependencies: 176
 -- Name: items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -184,7 +184,7 @@ ALTER SEQUENCE items_id_seq OWNED BY items.id;
 
 
 --
--- TOC entry 177 (class 1259 OID 50651)
+-- TOC entry 177 (class 1259 OID 52729)
 -- Name: items_joined; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -205,7 +205,7 @@ ALTER TABLE ONLY items_joined REPLICA IDENTITY NOTHING;
 ALTER TABLE items_joined OWNER TO postgres;
 
 --
--- TOC entry 178 (class 1259 OID 50657)
+-- TOC entry 178 (class 1259 OID 52735)
 -- Name: items_stores; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -219,20 +219,7 @@ CREATE TABLE items_stores (
 ALTER TABLE items_stores OWNER TO postgres;
 
 --
--- TOC entry 179 (class 1259 OID 50660)
--- Name: managers; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE managers (
-    user_id integer NOT NULL,
-    store_id integer NOT NULL
-);
-
-
-ALTER TABLE managers OWNER TO postgres;
-
---
--- TOC entry 180 (class 1259 OID 50663)
+-- TOC entry 180 (class 1259 OID 52741)
 -- Name: orders; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -252,7 +239,7 @@ CREATE TABLE orders (
 ALTER TABLE orders OWNER TO postgres;
 
 --
--- TOC entry 181 (class 1259 OID 50669)
+-- TOC entry 181 (class 1259 OID 52749)
 -- Name: orders_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -267,7 +254,7 @@ CREATE SEQUENCE orders_id_seq
 ALTER TABLE orders_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2100 (class 0 OID 0)
+-- TOC entry 2102 (class 0 OID 0)
 -- Dependencies: 181
 -- Name: orders_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -276,7 +263,7 @@ ALTER SEQUENCE orders_id_seq OWNED BY orders.id;
 
 
 --
--- TOC entry 182 (class 1259 OID 50671)
+-- TOC entry 182 (class 1259 OID 52751)
 -- Name: statuses; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -289,7 +276,7 @@ CREATE TABLE statuses (
 ALTER TABLE statuses OWNER TO postgres;
 
 --
--- TOC entry 183 (class 1259 OID 50677)
+-- TOC entry 183 (class 1259 OID 52757)
 -- Name: statuses_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -304,7 +291,7 @@ CREATE SEQUENCE statuses_id_seq
 ALTER TABLE statuses_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2101 (class 0 OID 0)
+-- TOC entry 2103 (class 0 OID 0)
 -- Dependencies: 183
 -- Name: statuses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -313,7 +300,7 @@ ALTER SEQUENCE statuses_id_seq OWNED BY statuses.id;
 
 
 --
--- TOC entry 184 (class 1259 OID 50679)
+-- TOC entry 184 (class 1259 OID 52759)
 -- Name: stores; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -326,7 +313,7 @@ CREATE TABLE stores (
 ALTER TABLE stores OWNER TO postgres;
 
 --
--- TOC entry 185 (class 1259 OID 50685)
+-- TOC entry 185 (class 1259 OID 52765)
 -- Name: stores_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -341,7 +328,7 @@ CREATE SEQUENCE stores_id_seq
 ALTER TABLE stores_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2102 (class 0 OID 0)
+-- TOC entry 2104 (class 0 OID 0)
 -- Dependencies: 185
 -- Name: stores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -350,7 +337,7 @@ ALTER SEQUENCE stores_id_seq OWNED BY stores.id;
 
 
 --
--- TOC entry 186 (class 1259 OID 50687)
+-- TOC entry 186 (class 1259 OID 52767)
 -- Name: users; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -370,7 +357,7 @@ CREATE TABLE users (
 ALTER TABLE users OWNER TO postgres;
 
 --
--- TOC entry 187 (class 1259 OID 50693)
+-- TOC entry 187 (class 1259 OID 52773)
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -385,7 +372,7 @@ CREATE SEQUENCE users_id_seq
 ALTER TABLE users_id_seq OWNER TO postgres;
 
 --
--- TOC entry 2103 (class 0 OID 0)
+-- TOC entry 2105 (class 0 OID 0)
 -- Dependencies: 187
 -- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -394,7 +381,20 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
--- TOC entry 1936 (class 2604 OID 50695)
+-- TOC entry 179 (class 1259 OID 52738)
+-- Name: users_stores; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE users_stores (
+    user_id integer NOT NULL,
+    store_id integer NOT NULL
+);
+
+
+ALTER TABLE users_stores OWNER TO postgres;
+
+--
+-- TOC entry 1936 (class 2604 OID 52775)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -402,7 +402,7 @@ ALTER TABLE ONLY categories ALTER COLUMN id SET DEFAULT nextval('categories_id_s
 
 
 --
--- TOC entry 1937 (class 2604 OID 50696)
+-- TOC entry 1937 (class 2604 OID 52776)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -410,7 +410,7 @@ ALTER TABLE ONLY items ALTER COLUMN id SET DEFAULT nextval('items_id_seq'::regcl
 
 
 --
--- TOC entry 1938 (class 2604 OID 50697)
+-- TOC entry 1940 (class 2604 OID 52777)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -418,7 +418,7 @@ ALTER TABLE ONLY orders ALTER COLUMN id SET DEFAULT nextval('orders_id_seq'::reg
 
 
 --
--- TOC entry 1941 (class 2604 OID 50698)
+-- TOC entry 1941 (class 2604 OID 52778)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -426,7 +426,7 @@ ALTER TABLE ONLY statuses ALTER COLUMN id SET DEFAULT nextval('statuses_id_seq':
 
 
 --
--- TOC entry 1942 (class 2604 OID 50699)
+-- TOC entry 1942 (class 2604 OID 52779)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -434,7 +434,7 @@ ALTER TABLE ONLY stores ALTER COLUMN id SET DEFAULT nextval('stores_id_seq'::reg
 
 
 --
--- TOC entry 1943 (class 2604 OID 50700)
+-- TOC entry 1943 (class 2604 OID 52780)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -442,7 +442,7 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 
 --
--- TOC entry 2076 (class 0 OID 50629)
+-- TOC entry 2078 (class 0 OID 52707)
 -- Dependencies: 172
 -- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1054,7 +1054,7 @@ COPY categories (id, name, location) FROM stdin;
 
 
 --
--- TOC entry 2104 (class 0 OID 0)
+-- TOC entry 2106 (class 0 OID 0)
 -- Dependencies: 173
 -- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1063,7 +1063,7 @@ SELECT pg_catalog.setval('categories_id_seq', 602, true);
 
 
 --
--- TOC entry 2078 (class 0 OID 50643)
+-- TOC entry 2080 (class 0 OID 52721)
 -- Dependencies: 175
 -- Data for Name: items; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -16966,7 +16966,7 @@ COPY items (id, name, price, category_id) FROM stdin;
 
 
 --
--- TOC entry 2105 (class 0 OID 0)
+-- TOC entry 2107 (class 0 OID 0)
 -- Dependencies: 176
 -- Name: items_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -16975,7 +16975,7 @@ SELECT pg_catalog.setval('items_id_seq', 15893, true);
 
 
 --
--- TOC entry 2080 (class 0 OID 50657)
+-- TOC entry 2082 (class 0 OID 52735)
 -- Dependencies: 178
 -- Data for Name: items_stores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -73948,17 +73948,7 @@ COPY items_stores (item_id, store_id, count) FROM stdin;
 
 
 --
--- TOC entry 2081 (class 0 OID 50660)
--- Dependencies: 179
--- Data for Name: managers; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY managers (user_id, store_id) FROM stdin;
-\.
-
-
---
--- TOC entry 2082 (class 0 OID 50663)
+-- TOC entry 2084 (class 0 OID 52741)
 -- Dependencies: 180
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -73968,7 +73958,7 @@ COPY orders (id, user_id, items, status_id, comment, createtime, address, paymen
 
 
 --
--- TOC entry 2106 (class 0 OID 0)
+-- TOC entry 2108 (class 0 OID 0)
 -- Dependencies: 181
 -- Name: orders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -73977,7 +73967,7 @@ SELECT pg_catalog.setval('orders_id_seq', 1, false);
 
 
 --
--- TOC entry 2084 (class 0 OID 50671)
+-- TOC entry 2086 (class 0 OID 52751)
 -- Dependencies: 182
 -- Data for Name: statuses; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -73989,7 +73979,7 @@ COPY statuses (id, name) FROM stdin;
 
 
 --
--- TOC entry 2107 (class 0 OID 0)
+-- TOC entry 2109 (class 0 OID 0)
 -- Dependencies: 183
 -- Name: statuses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -73998,7 +73988,7 @@ SELECT pg_catalog.setval('statuses_id_seq', 2, true);
 
 
 --
--- TOC entry 2086 (class 0 OID 50679)
+-- TOC entry 2088 (class 0 OID 52759)
 -- Dependencies: 184
 -- Data for Name: stores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -74023,7 +74013,7 @@ COPY stores (id, name) FROM stdin;
 
 
 --
--- TOC entry 2108 (class 0 OID 0)
+-- TOC entry 2110 (class 0 OID 0)
 -- Dependencies: 185
 -- Name: stores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -74032,7 +74022,7 @@ SELECT pg_catalog.setval('stores_id_seq', 32, true);
 
 
 --
--- TOC entry 2088 (class 0 OID 50687)
+-- TOC entry 2090 (class 0 OID 52767)
 -- Dependencies: 186
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -74042,7 +74032,7 @@ COPY users (id, role, email, passhash, salt, name, sname, address, payment) FROM
 
 
 --
--- TOC entry 2109 (class 0 OID 0)
+-- TOC entry 2111 (class 0 OID 0)
 -- Dependencies: 187
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -74051,7 +74041,17 @@ SELECT pg_catalog.setval('users_id_seq', 1, false);
 
 
 --
--- TOC entry 1945 (class 2606 OID 50702)
+-- TOC entry 2083 (class 0 OID 52738)
+-- Dependencies: 179
+-- Data for Name: users_stores; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY users_stores (user_id, store_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 1945 (class 2606 OID 52782)
 -- Name: categories_id; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -74060,7 +74060,7 @@ ALTER TABLE ONLY categories
 
 
 --
--- TOC entry 1947 (class 2606 OID 50704)
+-- TOC entry 1947 (class 2606 OID 52784)
 -- Name: item_id; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -74069,16 +74069,16 @@ ALTER TABLE ONLY items
 
 
 --
--- TOC entry 1951 (class 2606 OID 50706)
+-- TOC entry 1951 (class 2606 OID 52786)
 -- Name: manager_id; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
-ALTER TABLE ONLY managers
+ALTER TABLE ONLY users_stores
     ADD CONSTRAINT manager_id PRIMARY KEY (user_id, store_id);
 
 
 --
--- TOC entry 1953 (class 2606 OID 50708)
+-- TOC entry 1953 (class 2606 OID 52788)
 -- Name: order_id; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -74087,7 +74087,7 @@ ALTER TABLE ONLY orders
 
 
 --
--- TOC entry 1955 (class 2606 OID 50710)
+-- TOC entry 1955 (class 2606 OID 52790)
 -- Name: status_id; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -74096,7 +74096,7 @@ ALTER TABLE ONLY statuses
 
 
 --
--- TOC entry 1949 (class 2606 OID 50712)
+-- TOC entry 1949 (class 2606 OID 52792)
 -- Name: stock_id; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -74105,7 +74105,7 @@ ALTER TABLE ONLY items_stores
 
 
 --
--- TOC entry 1957 (class 2606 OID 50714)
+-- TOC entry 1957 (class 2606 OID 52794)
 -- Name: store_id; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -74114,7 +74114,7 @@ ALTER TABLE ONLY stores
 
 
 --
--- TOC entry 1959 (class 2606 OID 50716)
+-- TOC entry 1959 (class 2606 OID 52796)
 -- Name: user_id; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -74123,7 +74123,7 @@ ALTER TABLE ONLY users
 
 
 --
--- TOC entry 2074 (class 2618 OID 50717)
+-- TOC entry 2076 (class 2618 OID 52797)
 -- Name: _RETURN; Type: RULE; Schema: public; Owner: postgres
 --
 
@@ -74145,7 +74145,7 @@ CREATE RULE "_RETURN" AS
 
 
 --
--- TOC entry 2075 (class 2618 OID 50719)
+-- TOC entry 2077 (class 2618 OID 52799)
 -- Name: _RETURN; Type: RULE; Schema: public; Owner: postgres
 --
 
@@ -74166,7 +74166,7 @@ CREATE RULE "_RETURN" AS
 
 
 --
--- TOC entry 1960 (class 2606 OID 50720)
+-- TOC entry 1960 (class 2606 OID 52800)
 -- Name: category_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -74175,7 +74175,7 @@ ALTER TABLE ONLY items
 
 
 --
--- TOC entry 1961 (class 2606 OID 50725)
+-- TOC entry 1961 (class 2606 OID 52805)
 -- Name: item_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -74184,7 +74184,7 @@ ALTER TABLE ONLY items_stores
 
 
 --
--- TOC entry 1963 (class 2606 OID 50730)
+-- TOC entry 1965 (class 2606 OID 52810)
 -- Name: status_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -74193,7 +74193,7 @@ ALTER TABLE ONLY orders
 
 
 --
--- TOC entry 1962 (class 2606 OID 50735)
+-- TOC entry 1962 (class 2606 OID 52815)
 -- Name: store_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -74202,7 +74202,16 @@ ALTER TABLE ONLY items_stores
 
 
 --
--- TOC entry 1964 (class 2606 OID 50740)
+-- TOC entry 1964 (class 2606 OID 52832)
+-- Name: store_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY users_stores
+    ADD CONSTRAINT store_id FOREIGN KEY (store_id) REFERENCES stores(id);
+
+
+--
+-- TOC entry 1966 (class 2606 OID 52820)
 -- Name: user_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -74211,7 +74220,16 @@ ALTER TABLE ONLY orders
 
 
 --
--- TOC entry 2096 (class 0 OID 0)
+-- TOC entry 1963 (class 2606 OID 52827)
+-- Name: user_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY users_stores
+    ADD CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
+-- TOC entry 2098 (class 0 OID 0)
 -- Dependencies: 6
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
@@ -74222,7 +74240,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2015-06-05 20:16:00
+-- Completed on 2015-06-26 00:26:19
 
 --
 -- PostgreSQL database dump complete

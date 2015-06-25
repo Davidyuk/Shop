@@ -1,0 +1,6 @@
+﻿<ul class="nav nav-tabs grid-tables"><%
+FOREACH table in tables %>
+	<li data-table="<% table.table %>"><a href="#<% table.table %>"><% table.name %></a></li><%
+END %>
+</ul>
+<div id="grid"></div>
