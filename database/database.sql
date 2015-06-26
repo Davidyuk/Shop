@@ -345,8 +345,7 @@ CREATE TABLE users (
     id integer NOT NULL,
     role role,
     email text,
-    passhash text,
-    salt text,
+    password text,
     name text,
     sname text,
     address text,
@@ -74027,7 +74026,7 @@ SELECT pg_catalog.setval('stores_id_seq', 32, true);
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY users (id, role, email, passhash, salt, name, sname, address, payment) FROM stdin;
+COPY users (id, role, email, password, name, sname, address, payment) FROM stdin;
 \.
 
 

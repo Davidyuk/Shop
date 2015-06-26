@@ -41,12 +41,7 @@ __PACKAGE__->table("users");
   data_type: 'text'
   is_nullable: 1
 
-=head2 passhash
-
-  data_type: 'text'
-  is_nullable: 1
-
-=head2 salt
+=head2 password
 
   data_type: 'text'
   is_nullable: 1
@@ -89,9 +84,7 @@ __PACKAGE__->add_columns(
   },
   "email",
   { data_type => "text", is_nullable => 1 },
-  "passhash",
-  { data_type => "text", is_nullable => 1 },
-  "salt",
+  "password",
   { data_type => "text", is_nullable => 1 },
   "name",
   { data_type => "text", is_nullable => 1 },
@@ -158,8 +151,8 @@ Composing rels: L</users_stores> -> store
 __PACKAGE__->many_to_many("stores", "users_stores", "store");
 
 
-# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-06-26 00:35:46
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:eJkHduxgo/2vvEy0OEEPHw
+# Created by DBIx::Class::Schema::Loader v0.07043 @ 2015-06-26 11:29:28
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:cqB8tYe2qtqj1AZfRcT42Q
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

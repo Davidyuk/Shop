@@ -13,7 +13,7 @@ our $menu = [];
 our $messages = [];
 
 hook before => sub {
-	if (request->path_info =~ /^\/cabinet\// && ! defined session('user_id') ) {
+	if (request->path_info =~ /^\/cabinet/ && ! defined session('user_id') ) {
 		addMessage('Страница доступна только после входа в систему.', 'danger');
 		return redirect '/login';
 	}
