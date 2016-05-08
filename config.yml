@@ -7,7 +7,7 @@ appname: "Shop"
 
 # The default layout to use for your application (located in
 # views/layouts/main.tt)
-layout: "main"
+#layout: "main"
 
 # when the charset is set to UTF-8 Dancer will handle for you
 # all the magic of encoding and decoding. You should not care
@@ -22,8 +22,9 @@ charset: "utf-8"
 
 template: "template_toolkit"
 
-#engines:
-#  template_toolkit:
+engines:
+  template_toolkit:
+    WRAPPER: layouts/main.tt
 #    EVAL_PERL: 1
 #     recursion: 1
 #     start_tag: '[%'

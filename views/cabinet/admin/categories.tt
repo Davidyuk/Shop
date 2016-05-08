@@ -1,0 +1,8 @@
+﻿<%
+title => 'Управление категориями';
+styles = [ 'plugins/jstree/style.min.css' ];
+scripts = [ 'plugins/jstree.min.js', 'cabinet/admin/tree.js' ];
+INCLUDE cabinet/local_menu.tt %>
+<button id="category_create" type="submit" class="btn btn-default">Создать категорию</button>
+<div id="jstree" style="margin-top: 10px">
+</div>

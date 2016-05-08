@@ -1,13 +1,21 @@
-﻿use Shop::DB;
+﻿package Shop::Orders;
+use Dancer ':syntax';
+use Shop::DB;
 use Shop::Common;
 use strict;
 use warnings;
 use utf8;
 
-get '/cabinet/orders' => sub {	
+prefix '/cabinet/orders';
+
+hook before_template => sub {
+	addUserMenuItem({name => 'Состояние заказов', href => '/cabinet/orders', icon => 'glyphicon-list'});
+};
+
+get '' => sub {	
 	my $rs = db()->resultset('Order')->search({
 		hidden => 'FALSE',
-		user_id => session('user_id')
+		user_id => session('uid')
 	}, {
 		join => 'status',
 		'+select' => 'status.name',
@@ -20,17 +28,16 @@ get '/cabinet/orders' => sub {
 	foreach (@orders) {
 		$_->{createtime} = timeToText($_->{createtime});
 	}
-	template 'orders', {
-		title => 'Заказы',
+	template 'cabinet/orders/orders', {
 		orders => [@orders],
 		pages => $rs->pager()->last_page
 	};
 };
 
-post '/cabinet/orders' => sub {
+post '' => sub {
 	my $f = isParamUInt('delete');
 	my $order = db()->resultset('Order')->find(param('delete')) if $f;
-	$f &&= $order && $order->user_id == session('user_id') && $order->status_id != 2 && ! $order->hidden;
+	$f &&= $order && $order->user_id == session('uid') && $order->status_id != 2 && ! $order->hidden;
 	unless ($f) {
 		addMessage('Ошибка удаления заказа.', 'danger');
 		return redirect '/cabinet/orders';
@@ -41,7 +48,7 @@ post '/cabinet/orders' => sub {
 	redirect '/cabinet/orders';
 };
 
-get '/cabinet/orders/:id' => sub {
+get '/:id' => sub {
 	my $f = isParamUInt('id');
 	my $order = undef;
 	if ($f) {
@@ -57,9 +64,10 @@ get '/cabinet/orders/:id' => sub {
 	}
 	return error404() unless $f && $order;
 	$order->{createtime} = timeToText($order->{createtime});
-	my %items = ( map { (split(':', $_))[0] => { count => (split(':', $_))[1], price => (split(':', $_))[2] } }  split(';', $order->{items}) );
+	my $ss = sub { my ($id, $c, $p) = split(':', $_[0]); ($id => { count => $c, price => $p }); }; 
+	my %items = map $ss->($_), split(';', $order->{items});
 	my $price = 0;
-	$price += $_->{price} * $_->{count} foreach (values %items);
+	$price += $_->{price} * $_->{count} foreach values %items;
 	
 	my $rs = db()->resultset('ItemJoined')->search({
 		id => [ map { (split(':', $_))[0] } split(';', $order->{items}) ]
@@ -72,11 +80,14 @@ get '/cabinet/orders/:id' => sub {
 		$_->{price} = $items{$_->{id}}->{price};
 		$_->{count} = $items{$_->{id}}->{count};
 	}
-	template 'order', {
-		title => 'Заказ №' . $order->{id} . ', от ' . $order->{createtime},
+	template 'cabinet/orders/order', {
 		order => $order,
 		items => [@items],
 		price => $price,
 		pages => $rs->pager()->last_page
 	};
 };
+
+prefix undef;
+
+true;

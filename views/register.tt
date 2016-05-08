@@ -1,4 +1,9 @@
-﻿<form class="form-horizontal" method="post">
+﻿<%
+title = 'Регистрация';
+styles = [ 'plugins/jquery.kladr.min.css' ];
+scripts = [ 'plugins/jquery.kladr.min.js' ];
+%>
+<form class="form-horizontal" method="post">
 	<div class="form-group">
 		<label class="col-sm-3 control-label" for="email">Электронная почта</label>
 		<div class="col-sm-9">

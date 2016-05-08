@@ -1,9 +1,15 @@
-﻿<% IF stores %>
-<ul><%
-FOREACH store in stores %>
-	<li><a href="<% request.path_info %>/<% store.href %>"><% store.name %></a></li><%
-END %>
-</ul><%
+﻿<%
+IF stores;
+title = 'Магазины';
+%>
+<ul>
+	<% FOREACH store in stores %>
+	<li><a href="<% request.path_info %>/<% store.href %>"><% store.name %></a></li>
+	<% END %>
+</ul>
+<%
 ELSE;
+title = store.name;
 store.name;
-END %>
+END;
+%>

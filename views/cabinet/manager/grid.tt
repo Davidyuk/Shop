@@ -1,0 +1,15 @@
+﻿<%
+title => 'Управление магазинами';
+styles = [ 'plugins/jsgrid.min.css', 'plugins/jsgrid-theme.min.css' ];
+scripts = [ 'plugins/jsgrid.min.js', 'cabinet/jsgrid.settings.js', 'cabinet/manager/grid.js' ];
+INCLUDE cabinet/local_menu.tt %>
+<% IF stores %>
+<ul class="nav nav-tabs grid-stores"><%
+FOREACH store in stores %>
+	<li data-store="<% store.id %>"><a href="#<% store.id %>"><% store.name %></a></li><%
+END %>
+</ul>
+<div id="grid"></div><%
+ELSE %>
+Список управляемых магазинов пуст.<%
+END %>

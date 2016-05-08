@@ -1,0 +1,11 @@
+﻿<%
+title => 'Управление сайтом';
+styles = [ 'plugins/jsgrid.min.css', 'plugins/jsgrid-theme.min.css' ];
+scripts = [ 'plugins/jsgrid.min.js', 'cabinet/jsgrid.settings.js', 'cabinet/admin/grid.js' ];
+INCLUDE cabinet/local_menu.tt %>
+<ul class="nav nav-tabs grid-tables"><%
+FOREACH table in tables %>
+	<li data-table="<% table.table %>"><a href="#<% table.table %>"><% table.name %></a></li><%
+END %>
+</ul>
+<div id="grid"></div>

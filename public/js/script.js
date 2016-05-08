@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
 	}
 	var cart = {};
 	$.ajaxSetup({cache: false});
-	$.getJSON('/cart/ajax', function(data){
+	$.getJSON('/cart', function(data){
 		for (var i = 0; i < data.length; i++)
 			cart[data[i]] = true;
 		cart_count = data.length;
@@ -49,7 +49,7 @@ jQuery(document).ready(function($) {
 	
 	$('.btn-cart').click(function() {
 		cart[$(this).data('id')] = !cart[$(this).data('id')];
-		$.get('/cart/ajax', {
+		$.get('/cart', {
 			item: $(this).data('id'),
 			action: cart[$(this).data('id')] ? 'add' : 'remove',
 		}).error(networkError);

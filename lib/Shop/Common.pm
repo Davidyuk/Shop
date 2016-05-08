@@ -5,13 +5,27 @@ use warnings;
 
 use Exporter;
 our @ISA= qw( Exporter );
-our @EXPORT = qw( addMessage timeToText printd error404 isParamNEmp isParamEq isParamUInt);
+our @EXPORT = qw( addMessage addUserMenuItem timeToText printd error404 isParamNEmp isParamEq isParamUInt );
 
 sub addMessage {
-	push $Shop::messages, {
+	#printd(vars->{messages});
+	#var messages => [] unless vars->{messages};
+	session messages => [] unless session('messages');
+	session messages => [ @{session('messages')}, {
 		text => shift,
 		type => shift
-	};
+	}];
+	#printd(vars->{messages});
+	#var messages => [ @{vars->{messages}}, {
+	#	text => shift,
+	#	type => shift
+	#}];
+	#printd(vars->{messages});
+}
+
+sub addUserMenuItem {
+	var menu_user => [] unless vars->{menu_user};
+	var menu_user => [ @{vars->{menu_user}}, shift];
 }
 
 use DateTime::Format::Pg;
@@ -28,15 +42,13 @@ sub timeToText {
 }
 
 sub printd {
-	print STDERR Data::Dumper::Dumper( shift );
+	say STDERR Data::Dumper::Dumper( shift );
 }
 
 sub error404 {
 	status 404;
-	#addMessage('Страница не найдена', 'danger');
-	return template 'index', {
-		title => 'Страница не найдена'
-	};
+	addMessage('Ошибка 404. Нет такой страницы.', 'danger');
+	forward '/catalog';
 }
 
 sub isParamNEmp {

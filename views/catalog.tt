@@ -1,58 +1,62 @@
-﻿<div class="row">
+﻿<%
+title = 'Каталог';
+hide_title = 1;
+%>
+<% BLOCK categories_list %>
+	<ul>
+	<% FOREACH category IN content %>
+		<li><a href="<% request.path_info %>?category=<% category.id %>"><span><% category.name %></span>&nbsp;<span class="badge"><% category.count %></span></a>
+			<% IF category.content.size;
+				INCLUDE categories_list content = category.content;
+			END %>
+		</li>
+	<% END %>
+	</ul>
+<% END %>
+<div class="row">
 	<div class="col-sm-3 hidden-xs">
 		<div id="categories" class="list-group">
-		<%BLOCK list %>
-		<ul><%
-			FOREACH id IN item.keys.nsort %>
-			<li><a href="<% request.path_info %>?category=<% id %>"><span><% item.$id.name %></span>&nbsp;<span class="badge"><% item.$id.count %></span></a><%
-			IF item.$id.content.size;
-				INCLUDE list item = item.$id.content;
-			END %>
-			</li><%
-			END %>
-		</ul><%
-		END %>
-		<li class="list-group-item">Категории товаров</li><%
-		FOREACH id IN categories.keys.nsort %>
-			<li class="list-group-item"><a href="<% request.path_info %>?category=<% id %>"><% categories.$id.name %></a><%
-			IF categories.$id.content.size %>
-				<div class="plate_wrap"><div class="plate"><%
-					INCLUDE list item = categories.$id.content;%>
-				</div></div><%
-			END;
-			%>
-			</li><%
-		END; %>
+			<li class="list-group-item">Категории товаров</li>
+			<% FOREACH category IN categories %>
+				<li class="list-group-item">
+					<a href="<% request.path_info %>?category=<% category.id %>"><% category.name %></a>
+					<% IF category.content.size %>
+						<div class="plate_wrap"><div class="plate">
+							<% INCLUDE categories_list content = category.content %>
+						</div></div>
+					<% END %>
+				</li>
+			<% END %>
 		</div>
 	</div>
-	
+
 	<div class="col-sm-9 col-xs-12">
 		<form method="GET">
 			<div class="form-group">
 				<input type="search" name="search" class="form-control" placeholder="Поиск..." value="<% params.search %>">
 				<input type="hidden" name="category" value="<% params.category %>">
 			</div>
-		</form><%
-		IF breadcrumbs %>
-		<ul class="breadcrumb"><%
-			FOREACH breadcrumb IN breadcrumbs;
+		</form>
+		<% IF breadcrumbs %>
+		<ul class="breadcrumb">
+		<% FOREACH breadcrumb IN breadcrumbs;
 			IF breadcrumb.is_last %>
-				<li class="active"><% breadcrumb.name %></li><%
-				category_name = breadcrumb.name;
+				<li class="active"><% breadcrumb.name %></li>
+				<% category_name = breadcrumb.name;
 			ELSE %>
-				<li><a href="<% request.path_info %>?category=<% breadcrumb.id %>"><% breadcrumb.name %></a></li><%
-			END;
-			END %>
-		</ul><%
-		END;
-		
+				<li><a href="<% request.path_info %>?category=<% breadcrumb.id %>"><% breadcrumb.name %></a></li>
+			<% END;
+		END %>
+		</ul>
+		<% END;
+
 		IF items.size %>
 		<table class="table table-condensed table-hover"><%
 			SET category_name_last = '';
 			FOREACH id IN items;
 			IF (category_name_last != id.category_name) && (id.category_name != category_name) %>
-				<tr><td colspan="2" class="cell-gray"><a href="<% request.path_info %>?category=<% id.category_id %>"><% id.category_name %></a></td></tr><%
-				SET category_name_last = id.category_name;
+				<tr><td colspan="2" class="cell-gray"><a href="<% request.path_info %>?category=<% id.category_id %>"><% id.category_name %></a></td></tr>
+				<% SET category_name_last = id.category_name;
 			END %>
 				<tr>
 					<td class="cell-link"><a href="<% request.path_info %>/<% id.id %>"><% id.name %></a></td>
@@ -75,28 +79,28 @@
 								SET stores_id = id.stores_id.split('\|');
 								SET stores_name = id.stores_name.split('\|');
 								FOREACH i IN [0 .. stores_id.max] %>
-									<li><a href="/stores/<% stores_id.$i %>"><% stores_name.$i %></a></li><%
-								END %>					
+									<li><a href="/stores/<% stores_id.$i %>"><% stores_name.$i %></a></li>
+								<% END %>
 							</ul>
 						</div>
 					</td>
-				</tr><%
-			END %>
-		</table><%
-		INCLUDE pager.tt params_get = "&search=" _ params.search _ "&category=" _ params.category ;
+				</tr>
+			<% END %>
+		</table>
+		<% INCLUDE pager.tt params_get = "&search=" _ params.search _ "&category=" _ params.category ;
 		ELSE %>
-		<br><%
-		IF params.search %>
-			По запросу <b><% params.search %></b> ничего не найдено.
-			<p>Рекомендации:</p>
-			<ul>
-			<li>Убедитесь, что все слова написаны без ошибок.</li>
-			<li>Попробуйте использовать другие ключевые слова.</li>
-			<li>Попробуйте использовать более популярные ключевые слова.</li>
-			</ul><%
-		ELSE %>
-			<p>Категория <b><% category_name %></b> не содержит элементов.</p><%
-		END;
+			<br>
+			<% IF params.search %>
+				По запросу <b><% params.search %></b> ничего не найдено.
+				<p>Рекомендации:</p>
+				<ul>
+					<li>Убедитесь, что все слова написаны без ошибок.</li>
+					<li>Попробуйте использовать другие ключевые слова.</li>
+					<li>Попробуйте использовать более популярные ключевые слова.</li>
+				</ul>
+			<% ELSE %>
+				<p>Категория <b><% category_name %></b> не содержит элементов.</p>
+			<% END;
 		END %>
 	</div>
 </div>

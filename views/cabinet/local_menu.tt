@@ -1,0 +1,8 @@
+﻿<ul class="nav nav-pills"><%
+FOREACH link in menu %>
+	<li<% IF request.path_info == link.href %> class="active"<% END %>>
+		<a href="<% link.href %>"><% link.name %></a>
+	</li><%
+END %>
+</ul>
+<hr>

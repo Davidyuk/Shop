@@ -1,4 +1,8 @@
-﻿<form class="form-horizontal" method="post">
+﻿<%
+title = 'Личный кабинет';
+styles = [ 'plugins/jquery.kladr.min.css' ];
+scripts = [ 'plugins/jquery.kladr.min.js' ];
+%><form class="form-horizontal" method="post">
 	<div class="form-group">
 		<label class="col-sm-2 control-label" for="email">Электронная почта</label></td>
 		<div class="col-sm-10">

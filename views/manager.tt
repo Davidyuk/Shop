@@ -1,6 +1,0 @@
-﻿<ul class="nav nav-tabs grid-stores"><%
-FOREACH store in stores %>
-	<li data-store="<% store.store_id %>"><a href="#<% store.store_id %>"><% store.store_name %></a></li><%
-END %>
-</ul>
-<div id="grid"></div>

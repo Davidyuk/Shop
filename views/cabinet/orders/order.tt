@@ -1,4 +1,6 @@
-﻿<table class="table table-condensed table-hover">
+﻿<%
+title = 'Заказ №' _ order.id _ ', от ' _ order.createtime;
+%><table class="table table-condensed table-hover">
 	<thead><tr><td>Наименование</td><td></td></tr></thead><%
 	FOREACH item IN items %>
 		<tr>

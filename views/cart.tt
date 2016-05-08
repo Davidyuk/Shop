@@ -1,14 +1,22 @@
-﻿<style>
+﻿<%
+title = 'Корзина';
+styles = [ 'plugins/jquery.kladr.min.css' ];
+scripts = [ 'plugins/jquery.kladr.min.js', 'cart.js' ];
+%>
+<style>
 	.cart-count {
 		width: 120px;
 		display: inline-block;
 		vertical-align: middle;
 	}
 </style>
-<% final_price = 0;
+<%
+final_price = 0;
 IF items.size
-%><div id="cart">
-<table class="table table-condensed"><%
+%>
+<div id="cart">
+<table class="table table-condensed">
+	<%
 	FOREACH item IN items;
 	SET id = item.id;
 	final_price = final_price + item.price * session.cart.$id;
@@ -70,8 +78,8 @@ IF items.size
 	<button type="button" class="btn btn-success" data-toggle="collapse" data-target="#order">Оформить заказ</button>
 	<div class="btn-group pull-right">
 		<button type="button" class="btn btn-default btn-cart-clear">Очистить корзину <span class="glyphicon glyphicon-trash"></span></button>
-		<%#<a href="save" class="btn btn-default" IF ! session.user_id; " disabled"; END >Перейти к другой корзине <span class="glyphicon glyphicon-list-alt"></span></a>
-		  #<a href="save" class="btn btn-default" IF ! session.user_id; " disabled"; END >Сохранить корзину <span class="glyphicon glyphicon-floppy-disk"></span></a>%>
+		<%#<a href="save" class="btn btn-default" IF ! session.uid; " disabled"; END >Перейти к другой корзине <span class="glyphicon glyphicon-list-alt"></span></a>
+		  #<a href="save" class="btn btn-default" IF ! session.uid; " disabled"; END >Сохранить корзину <span class="glyphicon glyphicon-floppy-disk"></span></a>%>
 	</div>
 </div>
 <div id="order" class="collapse<% IF request.request_method == "POST"; " in"; END %>">
@@ -99,7 +107,7 @@ IF items.size
 		</div>
 	</form>
 </div>
-</div><%
-ELSE %>
-<p>Корзина не содержит элементов.</p><%
-END %>
+</div>
+<% ELSE %>
+	<p>Корзина не содержит элементов.</p>
+<% END %>

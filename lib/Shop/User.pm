@@ -1,4 +1,6 @@
-﻿use Shop::DB;
+﻿package Shop::User;
+use Dancer ':syntax';
+use Shop::DB;
 use Shop::Common;
 use strict;
 use warnings;
@@ -8,35 +10,24 @@ use Dancer::Plugin::Passphrase;
 my $default_path = '/';
 
 get '/login' => sub {
-	template 'login', { title => 'Вход' };
+	template 'login';
 };
 
 post '/login' => sub {
 	my $user = db()->resultset('User')->search({ 'email' => param('email') }, undef)->single();
 	if ($user && passphrase(param('password'))->matches($user->password)) {
-		session user_id => $user->id;
-		session user_name => getUserName($user);
-		session user_role => $user->role;
-		addMessage('Добро пожаловать, ' . session('user_name') . '.', 'success');
+		session uid => $user->id;
+		session name => getUserName($user);
+		session role => $user->role;
+		addMessage('Добро пожаловать, ' . session('name') . '.', 'success');
 		return redirect session('path_info') || $default_path;
 	}	
 	addMessage('Неверное имя пользователя или пароль. Проверьте правильность введенных данных.', 'danger');
-	template 'login', { title => 'Вход' };
-};
-
-get '/logout' => sub {
-	my $path = session('path_info');
-	session->destroy;
-	addMessage('Вы успешно вышли из системы.', 'info');
-	redirect $path || $default_path;
+	template 'login';
 };
 
 get '/register' => sub {
-	template 'register', {
-		styles => [ 'jquery.kladr.min.css' ],
-		scripts => [ 'jquery.kladr.min.js' ],
-		title => 'Регистрация'
-	};
+	template 'register';
 };
 
 post '/register' => sub {
@@ -56,30 +47,56 @@ post '/register' => sub {
 			payment => param('payment'),
 			address => param('address')
 		});
-		session user_id => $user->id;
-		session user_name => getUserName($user);
-		session user_role => $user->role;
-		addMessage('Вы успешно зарегистрировались, ' . session('user_name') . '.', 'success');
+		session uid => $user->id;
+		session name => getUserName($user);
+		session role => $user->role;
+		addMessage('Вы успешно зарегистрировались, ' . session('name') . '.', 'success');
 		return redirect session('path_info') || $default_path;
 	}
-	template 'register', {
-		styles => [ 'jquery.kladr.min.css' ],
-		scripts => [ 'jquery.kladr.min.js' ],
-		title => 'Регистрация'
-	};
+	template 'register';
+};
+
+hook before => sub {
+	if (request->path_info =~ /^\/cabinet/ && ! defined session('uid') ) {
+		addMessage('Страница доступна только после входа в систему.', 'danger');
+		return redirect '/login';
+	}
 };
 
 get '/cabinet' => sub {
-	template 'cabinet', {
-		styles => [ 'jquery.kladr.min.css' ],
-		scripts => [ 'jquery.kladr.min.js' ],
-		title => 'Личный кабинет',
-		user => db()->resultset('User')->find(session('user_id'))
+	redirect '/cabinet/edit';
+};
+
+hook before => sub {
+	session role => '' unless session('role');
+	session path_info => $default_path unless session('path_info');
+};
+
+hook before_template => sub {
+	my @arr = qw(/login /cabinet/logout /register /cabinet/);
+	session path_info => request->path_info
+		unless request->path_info ~~ @arr;
+};
+
+get '/cabinet/logout' => sub {
+	my $path = session('path_info');
+	session->destroy;
+	addMessage('Вы успешно вышли из системы.', 'info');
+	redirect $path || $default_path;
+};
+
+hook before_template => sub {
+	addUserMenuItem({name => 'Редактирование профиля', href => '/cabinet/edit', icon => 'glyphicon-cog'});
+};
+
+get '/cabinet/edit' => sub {
+	template 'cabinet/edit', {
+		user => db()->resultset('User')->find(session('uid'))
 	};
 };
 
-post '/cabinet' => sub {
-	my $user = db()->resultset('User')->find(session('user_id'));
+post '/cabinet/edit' => sub {
+	my $user = db()->resultset('User')->find(session('uid'));
 	if (isParamNEmp('action')) {
 		if (param('action') eq 'user_info') {
 			my ($valid, $user_check) = (true, undef);
@@ -109,10 +126,7 @@ post '/cabinet' => sub {
 			}
 		}
 	}
-	template 'cabinet', {
-		styles => [ 'jquery.kladr.min.css' ],
-		scripts => [ 'jquery.kladr.min.js' ],
-		title => 'Личный кабинет',
+	template 'cabinet/edit', {
 		user => $user
 	};
 };

@@ -1,0 +1,4 @@
+﻿<%
+title = 'Создание отчётов';
+INCLUDE cabinet/local_menu.tt %>
+...

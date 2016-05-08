@@ -1,4 +1,6 @@
-﻿<% IF orders.size %>
+﻿<%
+title = 'Заказы';
+IF orders.size %>
 <style>
 	.form-order-delete {
 		display: inline-block;

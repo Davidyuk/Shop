@@ -1,5 +1,10 @@
 jQuery(document).ready(function($) {
-	var roles = [ { id: '', name: '' }, { id: 'user', name: 'Пользователь' }, { id: 'manager', name: 'Менеджер' }, { id: 'admin', name: 'Администратор' } ];
+	var roles = [
+		{ id: '', name: '' },
+		{ id: 'user', name: 'Пользователь' },
+		{ id: 'manager', name: 'Менеджер' },
+		{ id: 'admin', name: 'Администратор' }
+	];
 	var metadata = {
 		categories: [
 			//{ width: '30px', editing: 0, name: 'id', type: 'number', title: 'ID'},
@@ -12,6 +17,12 @@ jQuery(document).ready(function($) {
 			{ name: 'name', type: 'text', title: 'Название'},
 			{ width: '30px', name: 'price', type: 'number', title: 'Стоимость'},
 			{ width: '30px', name: 'category_id', type: 'select', title: 'Категория', tableName: 'categories', valueField: 'id', textField: 'name' },
+			{ type: 'control' }
+		],
+		items_stores: [
+			{ width: '30px', editing: 0, name: 'item_id', type: 'number', title: 'Артикул' },
+			{ editing: 0, name: 'store_id', type: 'select', title: 'Магазин', tableName: 'stores', valueField: 'id', textField: 'name' },
+			{ name: 'count', type: 'number', title: 'Количество' },
 			{ type: 'control' }
 		],
 		users_stores: [
@@ -48,25 +59,20 @@ jQuery(document).ready(function($) {
 			{ type: 'control' }
 		]
 	};
-	jsGrid.fields.control.prototype.searchModeButtonTooltip = 'Переключить для поиска';
-	jsGrid.fields.control.prototype.insertModeButtonTooltip = 'Переключить для добавления';
-	jsGrid.fields.control.prototype.editButtonTooltip = 'Редактировать';
-	jsGrid.fields.control.prototype.deleteButtonTooltip = 'Удалить';
-	jsGrid.fields.control.prototype.searchButtonTooltip = 'Поиск';
-	jsGrid.fields.control.prototype.clearFilterButtonTooltip = 'Очистить фильтр';
-	jsGrid.fields.control.prototype.insertButtonTooltip = 'Добавить';
-	jsGrid.fields.control.prototype.updateButtonTooltip = 'Обновить';
-	jsGrid.fields.control.prototype.cancelEditButtonTooltip = 'Отменить редактирование';
 	$('.grid-tables li a').click(function() {
 		$('.grid-tables .active').removeClass('active');
 		var tableName = $(this).parent().addClass('active').data('table');
 		var requestCount = 0;
-		var noSelect = true;
+		var noSelectFields = true;
 		metadata[tableName].forEach(function(field){
 			if (field.type == 'select' && field.tableName) {
-				noSelect = false;
+				noSelectFields = false;
 				requestCount++;
-				$.getJSON('/cabinet/admin/ajax?table=' + field.tableName, function(data){
+				$.getJSON('/cabinet/admin/reference', {
+					table: field.tableName,
+					valueField: field.valueField,
+					textField: field.textField
+				}, function(data){
 					data.unshift({ id: 0, name: '' });
 					field.items = data;
 					requestCount--;
@@ -74,35 +80,18 @@ jQuery(document).ready(function($) {
 				}).error(networkError);
 			}
 		});
-		if (noSelect) RebuildGrid(tableName);
+		if (noSelectFields) RebuildGrid(tableName);
 	}).filter(window.location.hash ? '[href=' + window.location.hash + ']' : '*').first().trigger('click');
 	
+	var grid;
 	function RebuildGrid(tableName) {
+		if (grid) $("#grid").jsGrid("destroy");
 		$.ajaxSetup({
 			url: '/cabinet/admin/ajax?table=' + tableName,
 			dataType: 'json',
 			error: networkError
 		});
-		$('#grid').jsGrid({
-			width: '100%',
-			height: '800px',
-			sorting: true,
-			filtering: true,
-			inserting: true,
-			editing: true,
-			selecting: false,
-			paging: true,
-			pageLoading: true,
-			autoload: true,
-			pageSize: 20,
-			pagerFormat: 'Страницы: {first} {prev} {pages} {next} {last} &nbsp;&nbsp; {pageIndex} из {pageCount}',
-			pagePrevText: '<span class="glyphicon glyphicon-triangle-left"></span>',
-			pageNextText: '<span class="glyphicon glyphicon-triangle-right"></span>',
-			pageFirstText: '<span class="glyphicon glyphicon-backward"></span>',
-			pageLastText: '<span class="glyphicon glyphicon-forward"></span>',
-			loadMessage: 'Пожалуйста, подождите...',
-			deleteConfirm: 'Вы уверены?',
-			noDataContent: 'Не найдено',
+		grid = $('#grid').jsGrid({
 			fields: metadata[tableName],
 			controller: {
 				loadData: function(filter) {
